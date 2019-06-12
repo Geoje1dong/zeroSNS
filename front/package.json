@@ -11,6 +11,7 @@
   "author": "Geje2dong",
   "license": "ISC",
   "dependencies": {
+    "@ant-design/create-react-context": "^0.2.4",
     "antd": "^3.19.3",
     "next": "^8.1.0",
     "react": "^16.8.6",
