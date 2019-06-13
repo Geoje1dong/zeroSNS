@@ -16,7 +16,7 @@ const AppLayout = ({ children }) => {
                 <Menu.Item key='mail'>
                     <Input.Search enterButton style={{verticalAlign:'middle'}}/>
                 </Menu.Item>
-                {/* <Link href='/signup'><a><Button>회원가입</Button></a></Link> */}
+                <Menu.Item key='signup'><Link href='/signup'><a>회원가입</a></Link></Menu.Item>
             </Menu>
             { children }
         </div>
