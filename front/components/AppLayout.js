@@ -1,15 +1,9 @@
 import React,{ useState } from 'react';
-import { Menu, Input, Button, Row, Col, Card, Avatar, Form } from 'antd';
+import { Menu, Input, Row, Col} from 'antd';
 import Link from 'next/link';
 import LoginForm from './LoginForm';
-
-const dummy = {
-    nickname: '제로초',
-    Post: [],
-    Followings:[],
-    Followers:[],
-    isLoggedIn:false,
-}
+import UserProfile from '../components/UserProfile';
+import {dummy} from '../components/dummy';
 
 const AppLayout = ({ children }) => {
     return(
@@ -23,25 +17,8 @@ const AppLayout = ({ children }) => {
                 <Menu.Item key='signup'><Link href='/signup'><a>회원가입</a></Link></Menu.Item>
             </Menu>
             
-            <Row>
-                <Col xs={24} md={6}>
-                    {dummy.isLoggedIn ?
-                    <Card
-                        actions={[
-                            <div key='twit'>twit: {dummy.Post.length}</div>,
-                            <div key='following'>팔로잉: {dummy.Followings.length}</div>,
-                            <div key='follower'>팔로워: {dummy.Followers.length}</div>
-                        ]}
-                    >
-                        <Card.Meta
-                            avatar={<Avatar>{dummy.nickname[0]}</Avatar>}
-                            title={dummy.nickname}
-                        />
-                    </Card>
-                    :
-                    <LoginForm />
-                    }
-                </Col>
+            <Row gutter={24} style={{margin:'40px 0'}}>
+                <Col xs={24} md={6}>{dummy.isLoggedIn ? <UserProfile />:<LoginForm />}</Col>
                 <Col xs={24} md={12}>{ children }</Col>
                 <Col xs={24} md={6}></Col>
             </Row>
