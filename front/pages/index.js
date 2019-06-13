@@ -4,9 +4,7 @@ import AppLayout from '../components/AppLayout';
 const Home = () => {
     return (
         <React.Fragment>
-            <AppLayout>
-                <h2>Hello, Next!</h2>
-            </AppLayout>
+            <h2>Hello, Next!</h2>
         </React.Fragment>
     )
 }

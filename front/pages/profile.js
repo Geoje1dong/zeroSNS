@@ -4,9 +4,7 @@ import AppLayout from '../components/AppLayout';
 const Profile = () => {
     return(
         <React.Fragment>
-            <AppLayout>
-                <div>프로필</div>
-            </AppLayout>
+            <div>프로필</div>
         </React.Fragment>
     )
 }
