@@ -1,6 +1,13 @@
 import React from 'react';
-import { Menu, Input, Button } from 'antd';
+import { Menu, Input, Button, Row, Col, Card, Avatar } from 'antd';
 import Link from 'next/link';
+
+const dummy = {
+    nickname: '제로초',
+    Post: [],
+    Followings:[],
+    Followers:[]
+}
 
 const AppLayout = ({ children }) => {
     return(
@@ -13,7 +20,25 @@ const AppLayout = ({ children }) => {
                 </Menu.Item>
                 <Menu.Item key='signup'><Link href='/signup'><a>회원가입</a></Link></Menu.Item>
             </Menu>
-            { children }
+            
+            <Row>
+                <Col xs={24} md={6}>
+                    <Card
+                        actions={[
+                            <div key='twit'>twit: {dummy.Post.length}</div>,
+                            <div key='following'>팔로잉: {dummy.Followings.length}</div>,
+                            <div key='follower'>팔로워: {dummy.Followers.length}</div>
+                        ]}
+                    >
+                        <Card.Meta
+                            avatar={<Avatar>{dummy.nickname[0]}</Avatar>}
+                            title={dummy.nickname}
+                        />
+                    </Card>
+                </Col>
+                <Col xs={24} md={12}>{ children }</Col>
+                <Col xs={24} md={6}></Col>
+            </Row>
         </div>
     )
 }
