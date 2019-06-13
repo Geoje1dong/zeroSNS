@@ -1,12 +1,14 @@
-import React from 'react';
-import { Menu, Input, Button, Row, Col, Card, Avatar } from 'antd';
+import React,{ useState } from 'react';
+import { Menu, Input, Button, Row, Col, Card, Avatar, Form } from 'antd';
 import Link from 'next/link';
+import LoginForm from './LoginForm';
 
 const dummy = {
     nickname: '제로초',
     Post: [],
     Followings:[],
-    Followers:[]
+    Followers:[],
+    isLoggedIn:false,
 }
 
 const AppLayout = ({ children }) => {
@@ -23,6 +25,7 @@ const AppLayout = ({ children }) => {
             
             <Row>
                 <Col xs={24} md={6}>
+                    {dummy.isLoggedIn ?
                     <Card
                         actions={[
                             <div key='twit'>twit: {dummy.Post.length}</div>,
@@ -35,6 +38,9 @@ const AppLayout = ({ children }) => {
                             title={dummy.nickname}
                         />
                     </Card>
+                    :
+                    <LoginForm />
+                    }
                 </Col>
                 <Col xs={24} md={12}>{ children }</Col>
                 <Col xs={24} md={6}></Col>

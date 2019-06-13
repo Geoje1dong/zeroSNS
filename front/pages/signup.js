@@ -1,28 +1,23 @@
 import React, { useState, useCallback } from 'react';
 import { Form, Input, Checkbox, Button } from 'antd';
 
-const TextInput = ({ name, value, onChange}) => {
-    <Input name={name} value={value} required onChange={onChange} />
-}
+export const useInput = (initValue = null) => {
+    const [value, setter] = useState(initValue);
+    const handler = useCallback((e) => {
+        setter(e.target.value);
+    }, [])
+    return [value, handler]
+};
 
 const Signup = () => {
-    const [passwordCheck, setPasswordCheck] = useState('');
-    const [term, setTerm] = useState(false);
-    const [passwordError, setPasswordError] = useState('');
-    const [termError, setTermError] = useState('');
-
-    const useInput = (initValue = null) => {
-        const [value, setter] = useState(initValue);
-        const handler = useCallback((e) => {
-            setter(e.target.value);
-        }, [])
-        return [value, handler]
-    };
-
     const [id, onChangeId] = useInput('');
     const [nick, onChangeNick] = useInput('');
     const [password, onChangePassword] = useInput('');
 
+    const [passwordCheck, setPasswordCheck] = useState('');
+    const [term, setTerm] = useState(false);
+    const [passwordError, setPasswordError] = useState('');
+    const [termError, setTermError] = useState('');
     const onSubmit = useCallback((e) => {
         e.preventDefault();
         if(password !== passwordCheck){
