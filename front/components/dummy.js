@@ -1,5 +1,5 @@
 export const dummy = {
-    isLoggedIn: true,
+    isLoggedIn: false,
     nickname: '제로초',
     Post: [],
     Followings:[],

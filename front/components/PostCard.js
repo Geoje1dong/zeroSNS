@@ -1,6 +1,5 @@
 import React from 'react';
 import {Button, Card, Avatar, Icon } from 'antd';
-import { dummy } from '../components/dummy';
 import PropTypes from 'prop-types';
 
 const PostCard = ({ post }) => {
