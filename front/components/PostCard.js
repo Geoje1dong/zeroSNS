@@ -26,13 +26,13 @@ const PostCard = ({ post }) => {
     )
 }
 
-PostCard.PropTypes = {
-    post: PropTypes.shape({
-        User: PropTypes.object,
-        content:PropTypes.string,
-        img:PropTypes.string,
-        createAt:PropTypes.object,
-    })
-}
+// PostCard.PropTypes = {
+//     post: PropTypes.shape({
+//         User: PropTypes.object,
+//         content:PropTypes.string,
+//         img:PropTypes.string,
+//         createAt:PropTypes.object,
+//     })
+// }
 
 export default PostCard;
