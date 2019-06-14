@@ -1,8 +1,9 @@
 import React from 'react';
-import { dummy } from '../components/dummy';
 import { Input, Form, Button} from 'antd';
-
+import { useSelector } from 'react-redux';
 const PostForm = () => {
+    const imagePaths = useSelector(state => state.post.imagePaths);
+
     return(
         <>
             <Form encType='multipart/form-data'>
@@ -13,7 +14,7 @@ const PostForm = () => {
                     <Button type='primary' htmlType='submit'>짹쨱</Button>
                 </div>
                 <div>
-                    {dummy.imagePaths.map((v, i) => {
+                    {imagePaths.map((v) => {
                         return(
                             <div key={v}>
                                 <img src={'http://localhost:3000/'+v} style={{width:'200px'}} alt={v} />

@@ -3,9 +3,10 @@ import { Menu, Input, Row, Col} from 'antd';
 import Link from 'next/link';
 import LoginForm from './LoginForm';
 import UserProfile from '../components/UserProfile';
-import {dummy} from '../components/dummy';
+import {useSelector} from 'react-redux';
 
 const AppLayout = ({ children }) => {
+    const isLoggedIn = useSelector(state => state.user.isLoggedIn)
     return(
         <div>
             <Menu mode="horizontal">
@@ -18,7 +19,7 @@ const AppLayout = ({ children }) => {
             </Menu>
             
             <Row gutter={24} style={{margin:'40px 0'}}>
-                <Col xs={24} md={6}>{dummy.isLoggedIn ? <UserProfile />:<LoginForm />}</Col>
+                <Col xs={24} md={6}>{isLoggedIn ? <UserProfile />:<LoginForm />}</Col>
                 <Col xs={24} md={12}>{ children }</Col>
                 <Col xs={24} md={6}></Col>
             </Row>
