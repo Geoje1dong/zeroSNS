@@ -1,32 +1,31 @@
-export const initalState ={
+export const initialState ={
     isLoggedIn: false,
     user: {},
 };
 
-const LOG_IN = 'LOG_IN';  //액션의 이름
-const LOG_OUT = 'LOG_OUT';
+export const LOG_IN = 'LOG_IN';  //액션의 이름
+export const LOG_OUT = 'LOG_OUT';
 
-const loginAction = {
+export const loginAction = {
     type:LOG_IN,
     data:{
         nickname:'제로초',
     },
 }
 
-const logoutAction = {
+export const logoutAction = {
     type:LOG_OUT,
 }
-
-const reducer = (state = initalState, action) => {
+const reducer = (state = initialState, action) => {
     switch(action.type){
-        case loginAction: {
+        case LOG_IN: {
             return{
                 ...state,
                 isLoggedIn: true,
                 user: action.data,
             }
         }
-        case logoutAction: {
+        case LOG_OUT: {
             return{
                 ...state,
                 isLoggedIn: false,

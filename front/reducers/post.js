@@ -1,9 +1,9 @@
-export const initalState = {
+export const initialState = {
     mainPosts: [],
 }
 
-const ADD_POST = 'ADD_POST';    //포스트 작성
-const ADD_DUMMY ='ADD_DUMMY';   //더미 데이터
+export const ADD_POST = 'ADD_POST';    //포스트 작성
+export const ADD_DUMMY ='ADD_DUMMY';   //더미 데이터
 
 const addPost = {
     type:ADD_POST,
@@ -21,14 +21,14 @@ const addDummy = {
     }
 }
 
-const reducer = (state= initalState, action) => {
+const reducer = (state= initialState, action) => {
     switch(action.type){
-        case addPost:{
+        case ADD_POST:{
             return{
                 ...state
             }
         }
-        case addDummy:{
+        case ADD_DUMMY:{
             return {
                 ...state,
                 mainPosts: [
