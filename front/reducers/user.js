@@ -2,17 +2,18 @@ const dummyUser = {
     nickname:'제로초123',
     Followings:[],
     Followers:[],
-    Post: []
+    Post: [],
+    signUpData:{}
 }
 
 export const initialState ={
     isLoggedIn: false,
     user: null
-    
 };
 
 export const LOG_IN = 'LOG_IN';  //액션의 이름
 export const LOG_OUT = 'LOG_OUT';
+export const SIGN_UP = 'SIGN_UP';
 
 export const loginAction = {
     type:LOG_IN,
@@ -21,6 +22,14 @@ export const loginAction = {
 export const logoutAction = {
     type:LOG_OUT,
 }
+
+export const signUpAction = (data) => {
+    return {
+        type:SIGN_UP,
+        data:data,
+    }
+}
+
 const reducer = (state = initialState, action) => {
     switch(action.type){
         case LOG_IN: {
@@ -35,6 +44,12 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 isLoggedIn: false,
                 user:null
+            }
+        }
+        case SIGN_UP: {
+            return{
+                ...state,
+                signUpData: action.data,
             }
         }
         default: {
