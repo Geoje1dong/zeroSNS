@@ -2,9 +2,9 @@ import { combineReducers } from 'redux';
 import user from './user';
 import post from './post';
 
-cont rootReducer = combineReducers({
+const rootReducer = combineReducers({
     user,
-    post,
+    post
 })
 
 export default rootReducer;

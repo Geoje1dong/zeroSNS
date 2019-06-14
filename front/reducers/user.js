@@ -1,5 +1,3 @@
-import reducer from "./post";
-
 export const initalState ={
     isLoggedIn: false,
     user: {},
@@ -19,7 +17,7 @@ const logoutAction = {
     type:LOG_OUT,
 }
 
-const reducer = (state = initialState, action) => {
+const reducer = (state = initalState, action) => {
     switch(action.type){
         case loginAction: {
             return{
@@ -33,6 +31,11 @@ const reducer = (state = initialState, action) => {
                 ...state,
                 isLoggedIn: false,
                 user:null
+            }
+        }
+        default: {
+            return{
+                ...state
             }
         }
     }
