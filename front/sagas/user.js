@@ -6,7 +6,7 @@ import {LOG_IN_REQUEST, LOG_IN_SUCCESS, LOG_IN_FAILURE, SIGN_UP_REQUEST, SIGN_UP
 import axios from 'axios';
 
 //로그인 
-function* loginAPI(){
+function loginAPI(){
     return axios.post('/login');
 }
 
@@ -30,7 +30,7 @@ function* watchLogin(){
 }
 
 //회원가입
-function* signUpAPI(){
+function signUpAPI(){
     return axios.post('/login');
 }
 
