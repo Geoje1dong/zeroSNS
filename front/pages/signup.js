@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Form, Input, Checkbox, Button } from 'antd';
-import {useDispatch} from 'react-redux';
-import { signUpAction } from '../reducers/user';
+import {useDispatch, useSelector} from 'react-redux';
+import { signUpRequestAction } from '../reducers/user';
 
 export const useInput = (initValue = null) => {
     const [value, setter] = useState(initValue);
@@ -22,6 +22,7 @@ const Signup = () => {
     const [termError, setTermError] = useState('');
 
     const dispatch = useDispatch();
+    const {isSigningUp} = useSelector(state => state.user)
     const onSubmit = useCallback((e) => {
         e.preventDefault();
         if(password !== passwordCheck){
@@ -30,7 +31,7 @@ const Signup = () => {
         if(!term){
             return setTermError(true)
         }
-        dispatch(signUpAction({
+        dispatch(signUpRequestAction({
             id,
             password,
             term,
@@ -82,7 +83,7 @@ const Signup = () => {
                     {termError && <div>약관에 동의하셔야 합니다.</div>}
                 </div>
                 <div>
-                    <Button type='primary' htmlType='submit'>가입하기</Button>
+                    <Button type='primary' htmlType='submit' loading={isSigningUp}>가입하기</Button>
                 </div>
             </Form>
         </React.Fragment>
