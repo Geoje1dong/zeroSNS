@@ -3,6 +3,7 @@ import {Button, Card, Avatar, Icon, List, Input, Form, Comment } from 'antd';
 import PropTypes from 'prop-types';
 import {useSelector, useDispatch} from 'react-redux'
 import {addCommentRequestAction} from '../reducers/post'
+import styled from 'styled-components';
 
 const PostCard = ({ post }) => {
     const [commnetFormOpened, setCommentFormOpend] = useState(false);
@@ -35,7 +36,7 @@ const PostCard = ({ post }) => {
 
     return(
         <>
-            <div>
+            <StyledBox>
                 <Card
                     key={+post.createdAt}
                     cover={post.img && <img alt='example' src={post.img} />}
@@ -77,10 +78,14 @@ const PostCard = ({ post }) => {
                         />
                     </>
                 )}
-            </div>
+            </StyledBox>
         </>
     )
 }
+
+const StyledBox = styled.div`
+    margin-bottom:40px;
+`
 
 // PostCard.PropTypes = {
 //     post: PropTypes.shape({
