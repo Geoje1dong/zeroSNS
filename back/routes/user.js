@@ -1,12 +1,17 @@
 const express =require('express');
 const router = express.Router();
+const db = require('../models');
 
 router.get('/', (req, res) => {
 
 });
 
-router.post('/', (req, res) => {
+router.post('/', async(req, res) => {    // 회원가입 
+    try{
 
+    } catch(e){
+        console.log(e);
+    }
 });
 
 router.get('/:id', (req, res) => {    //남의 정보 가져오는것
