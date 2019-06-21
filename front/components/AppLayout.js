@@ -7,7 +7,7 @@ const AppLayout = ({ children }) => {
     const isLoggedIn = useSelector(state => state.user.isLoggedIn)
     
     let loginState = null;
-    if(loginState){
+    if(isLoggedIn){
         loginState = <LoginLayout children={children}/>
     }else{        
         if(children.type.name == 'Home' || children.type.name == 'Signup'){
