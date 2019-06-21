@@ -1,4 +1,4 @@
-cont express = require('express');
+const express = require('express');
 
 const router = express.Router();
 
@@ -10,4 +10,4 @@ router.post('/images', (req, res) => {    //이미지 등록
 
 });
 
-module.express = Router
+module.exports = router

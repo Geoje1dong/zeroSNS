@@ -30,14 +30,13 @@ function* watchLogin(){
 }
 
 //회원가입
-function signUpAPI(){
-    return axios.post('/login');
+function signUpAPI(signUpData){
+    return axios.post('http://localhost:8080/api/user/', signUpData);
 }
 
-function* signUp(){
+function* signUp(action){
     try{    //성공
-        yield delay(2000);
-        //yield call(signUpAPI);
+        yield call(signUpAPI, action.data);
         yield put({
             type:SIGN_UP_SUCCESS
         });

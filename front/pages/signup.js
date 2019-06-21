@@ -3,6 +3,8 @@ import { Form, Input, Checkbox, Button } from 'antd';
 import {useDispatch, useSelector} from 'react-redux';
 import { signUpRequestAction } from '../reducers/user';
 import Router from 'next/router';
+import styled from 'styled-components';
+import Link from 'next/link';
 
 export const useInput = (initValue = null) => {
     const [value, setter] = useState(initValue);
@@ -40,12 +42,12 @@ const Signup = () => {
             return setTermError(true)
         }
         dispatch(signUpRequestAction({
-            id,
+            userId:id,
             password,
             term,
-            nick,
+            nickname:nick,
         }));
-    }, [password, passwordCheck, term]);
+    }, [id, nick, password, passwordCheck, term]);
 
     const onChangePasswordCheck = useCallback((e) => {
         setPasswordError(e.target.value !== password);
@@ -66,23 +68,19 @@ const Signup = () => {
             <Form onSubmit={onSubmit} style={formStyle}>
                 <div>
                     <label htmlFor='user-id'>아이디</label>
-                    <br />
                     <Input name='user-id' value={id} required onChange={onChangeId} />
                 </div>
                 <div>
                     <label htmlFor='user-nick'>닉네임</label>
-                    <br />
                     <Input name='user-nick' value={nick} required onChange={onChangeNick} />
                 </div>
                 <div>
                     <label htmlFor='user-password'>비밀번호</label>
-                    <br />
                     <Input name='user-password' value={password} type='password' required onChange={onChangePassword} />
                     {passwordError && <div>비밀번호가 일치하지 않습니다.</div>}
                 </div>
                 <div>
                     <label htmlFor='user-pass-check'>비밀번호 체크</label>
-                    <br />
                     <Input name='user-pass-check' value={passwordCheck} type='password' required onChange={onChangePasswordCheck} />
                     {passwordError && <div>비밀번호가 일치하지 않습니다.</div>}
                 </div>
@@ -94,8 +92,38 @@ const Signup = () => {
                     <Button type='primary' htmlType='submit' loading={isSigningUp}>가입하기</Button>
                 </div>
             </Form>
+
+            <StyledLogin>
+                <p>계정이 있으신가요?</p>
+                <Link href='/'><a>로그인</a></Link>
+            </StyledLogin>
         </React.Fragment>
     )
 }
+
+const StyledLogin = styled.div`
+    display:flex;
+    align-items:center;
+    width:220px;
+    position:absolute;
+    top:5%;
+    right:5%;
+    p{
+        display:flex;
+        flex:1;
+        margin:0;
+    }
+    a{
+        padding: 0px 20px;
+        border-radius:32px;
+        line-height:40px;
+        height:40px;
+        color:#000;
+        border:1px solid rgba(0,0,0,0.5);
+        display:inline-block;
+        width:100px;
+        text-align:center;
+    }
+`
 
 export default Signup
