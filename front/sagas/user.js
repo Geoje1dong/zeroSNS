@@ -5,17 +5,19 @@ import {all, fork, takeLatest,takeEvery, call, put, take, delay} from 'redux-sag
 import {LOG_IN_REQUEST, LOG_IN_SUCCESS, LOG_IN_FAILURE, SIGN_UP_REQUEST, SIGN_UP_SUCCESS, SIGN_UP_FAILURE} from '../reducers/user';
 import axios from 'axios';
 
+axios.defaults.baseURL = 'http://localhost:8080/api';
+
 //로그인 
-function loginAPI(){
-    return axios.post('/login');
+function loginAPI(loginData){
+    return axios.post('/user/login', loginData);
 }
 
-function* login(){
+function* login(action){
     try{    //성공
-        //yield call(loginAPI);
-        yield delay(2000);
+        const result = yield call(loginAPI, action.data);
         yield put({
-            type:LOG_IN_SUCCESS
+            type:LOG_IN_SUCCESS,
+            data: result.data,
         });
     } catch(e) {    //실패
         console.log(e);
@@ -31,7 +33,7 @@ function* watchLogin(){
 
 //회원가입
 function signUpAPI(signUpData){
-    return axios.post('http://localhost:8080/api/user/', signUpData);
+    return axios.post('/user', signUpData);
 }
 
 function* signUp(action){

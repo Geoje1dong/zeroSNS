@@ -7,17 +7,18 @@ import Link from 'next/link';
 import styled from 'styled-components';
 
 const LoginForm = () => {
-    const [Id, onChangeId] = useInput('');
-    const [Password, onChangePassword] = useInput('');
+    const [id, onChangeId] = useInput('');
+    const [password, onChangePassword] = useInput('');
     const { isLoggingIn, me } = useSelector(state => state.user);
     const dispatch = useDispatch();
 
     const onSubmitForm = useCallback((e) => {
         e.preventDefault();
         dispatch(loginRequestAction({
-            Id, Password,
+            userId:id, 
+            password,
         }));
-    },[Id, Password])
+    },[id, password])
 
     return(
         <>
@@ -26,11 +27,11 @@ const LoginForm = () => {
                 <p>아래에 세부 정보를 입력하십시오.</p>
                 <div>
                     <label htmlFor='user-id'>아이디</label>
-                    <Input name='user-id' value={Id} required onChange={onChangeId} />
+                    <Input name='user-id' value={id} required onChange={onChangeId} />
                 </div>
                 <div>
                     <label htmlFor='user-password'>패스워드</label>
-                    <Input name='user-password' value={Password} type='password' required onChange={onChangePassword} />
+                    <Input name='user-password' value={password} type='password' required onChange={onChangePassword} />
                 </div>
                 <div>
                     <Button type='primary' htmlType='submit' loading={isLoggingIn}>로그인</Button>
