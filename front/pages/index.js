@@ -4,21 +4,26 @@ import PostCard from '../components/PostCard';
 import {useDispatch, useSelector} from 'react-redux';
 import {loginAction, logoutAction} from '../reducers/user';
 import LoginFrom from '../components/LoginForm';
+import { loadMainPostsRequestAction } from '../reducers/post';
 
 const Home = () => {
-    const { user, isLoggedIn } = useSelector(state => state.user);
+    const { user, me } = useSelector(state => state.user);
     const { mainPosts } = useSelector(state => state.post);
     //const dispatch = useDispatch();
     // useEffect(() => {
     //     dispatch(loginAction)
     //     dispatch(logoutAction)
     // },[]);
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(loadMainPostsRequestAction);
+    },[])
     return (
         <React.Fragment>
-            {isLoggedIn ?
+            {me ?
                 <div>
                     <PostForm />
-                    {mainPosts.map((c)=> {return <PostCard key={c.User.id} post={c}/>})}
+                    {mainPosts.map((c)=> {return <PostCard key={c} post={c}/>})}
                 </div>
                 
             :<LoginFrom />}

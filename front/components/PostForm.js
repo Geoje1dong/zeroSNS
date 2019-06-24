@@ -19,11 +19,13 @@ const PostForm = () => {
     
     const onSubmitForm = useCallback((e) => {
         e.preventDefault();
+        if (!text || !text.trim()) {
+            alert('게시글을 작성하세요.');
+        }
         dispatch(addPostRequestAction({
-            text,
+            content:text,
         }));
-    },[])
-
+    },[text]);
 
     return(
         <>

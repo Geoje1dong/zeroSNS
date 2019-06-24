@@ -12,7 +12,7 @@ const LoginLayout = ({ children }) => {
         }
     `
 
-    const {isLoggedIn} = useSelector(state => state.user);
+    const {me} = useSelector(state => state.user);
     return(
         <>
             <GlobalStyle />
@@ -30,7 +30,7 @@ const LoginLayout = ({ children }) => {
                     { children }
                 </StyledChildrenBox>
                 <StyledSideBox>
-                    {isLoggedIn && <UserProfile />}
+                    {me && <UserProfile />}
                 </StyledSideBox>
             </StyledBox>
         </>

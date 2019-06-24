@@ -20,7 +20,10 @@ passportConfig();
 app.use(morgan('dev'));
 app.use(express.json());    //json 처리
 app.use(express.urlencoded({extended:true}));    //form 처리
-app.use(cors());
+app.use(cors({
+    origin:true,
+    credentials:true
+}));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(expressSession({
     resave:false,   //매번 세션 강제 저장
@@ -29,12 +32,13 @@ app.use(expressSession({
     cookie:{
         httpOnly:true,
         secure:false, //https를 사용할때 ture
-    }
+    },
+    name: 'dkdlwk',
 }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-//api
+// API는 다른 서비스가 내 서비스의 기능을 실행할 수 있게 열어둔 창구
 app.use('/api/user', userAPIRouter);
 app.use('/api/posts', postsAPIRouter);
 app.use('/api/post', postAPIRouter);
