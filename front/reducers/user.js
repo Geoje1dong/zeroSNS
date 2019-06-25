@@ -68,6 +68,20 @@ export const loadUserAction = {
     type:LOAD_USER_REQUEST,
 }
 
+export const loadUserPostsRequestAction = (data) =>{
+    return{
+        type:LOAD_USER_POSTS_REQUEST,
+        data:data,
+    }
+}
+
+export const loadUserRequestAction = (data) => {
+    return{
+        type:LOAD_USER_REQUEST,
+        data:data,
+    }
+}
+
 const reducer = (state = initialState, action) => {
     switch(action.type){
         case LOG_IN_REQUEST: {

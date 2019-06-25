@@ -14,7 +14,6 @@ router.post('/', async (req, res, next) => { // POST /api/post
         const result = await Promise.all(hashtags.map(tag => db.Hashtag.findOrCreate({
           where: { name: tag.slice(1).toLowerCase() },
         })));
-        console.log(result);
         await newPost.addHashtags(result.map(r => r[0]));
       }
       // const User = await newPost.getUser();

@@ -30,7 +30,6 @@ router.post('/', async(req, res, next) => {    // 회원가입
             userId: req.body.userId,
             password: hashedPassword,
         });
-        console.log(newUser);
         return res.status(200).json(newUser);
     } catch(e){
         console.log(e);
@@ -79,7 +78,6 @@ router.post('/login', (req, res, next) => { //로그인
                     }],
                     attributes:['id', 'nickname', 'userId'],
                 });
-                console.log(fullUser)
                 return res.json(fullUser);
             }catch(e){
                 next(e);

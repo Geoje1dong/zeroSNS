@@ -69,6 +69,13 @@ export const addCommentRequestAction = data => {
     }
 }
 
+export const loadHashtagPostsRequestAction = data => {
+    return{
+        type:LOAD_HASHTAG_POSTS_REQUEST,
+        data:data,
+    }
+}
+
 export const loadMainPostsRequestAction = {
     type:LOAD_MAIN_POSTS_REQUEST,
 }
