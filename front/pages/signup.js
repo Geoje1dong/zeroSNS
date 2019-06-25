@@ -29,6 +29,7 @@ const Signup = () => {
 
     useEffect(() =>{
         if(me){
+            alert('a');
             Router.push('/');
         }
     },[me && me.id])

@@ -20,10 +20,10 @@ const PostForm = () => {
     const onSubmitForm = useCallback((e) => {
         e.preventDefault();
         if (!text || !text.trim()) {
-            alert('게시글을 작성하세요.');
+            return alert('게시글을 작성하세요.');
         }
         dispatch(addPostRequestAction({
-            content:text,
+            content:text.trim(),
         }));
     },[text]);
 
