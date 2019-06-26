@@ -93,19 +93,21 @@ function* watchSignUp() {
     yield takeEvery(SIGN_UP_REQUEST, signUp)
 }
 
-//내정보 불러오기
-function loaduserAPI(){
-    return axios.get('/user/', {
+//유저정보 불러오기
+function loaduserAPI(userId){
+    return axios.get(
+        userId ? `/user/${userId}` : '/user/', {
         withCredentials: true,
     });
 }
 
-function* loadUser(){
+function* loadUser(action){
     try{
-        const result = yield call(loaduserAPI);
+        const result = yield call(loaduserAPI, action.data);
         yield put({
             type:LOAD_USER_SUCCESS,
             data:result.data,
+            me: !action.data
         });
     }catch(e){
         console.log(e);

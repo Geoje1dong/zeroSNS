@@ -1,5 +1,5 @@
 import {all, takeLatest, fork, call, put, delay} from 'redux-saga/effects';
-import {ADD_POST_REQUEST, ADD_POST_SUCCESS, ADD_POST_FAILURE, ADD_COMMENT_REQUEST, ADD_COMMENT_FAILURE, ADD_COMMENT_SUCCESS, LOAD_MAIN_POSTS_REQUEST, LOAD_MAIN_POSTS_FAILURE, LOAD_MAIN_POSTS_SUCCESS} from '../reducers/post';
+import {ADD_POST_REQUEST, ADD_POST_SUCCESS, ADD_POST_FAILURE, ADD_COMMENT_REQUEST, ADD_COMMENT_FAILURE, ADD_COMMENT_SUCCESS, LOAD_MAIN_POSTS_REQUEST, LOAD_MAIN_POSTS_FAILURE, LOAD_MAIN_POSTS_SUCCESS, LOAD_HASHTAG_POSTS_REQUEST, LOAD_HASHTAG_POSTS_FAILURE, LOAD_HASHTAG_POSTS_SUCCESS, LOAD_USER_POSTS_SUCCESS, LOAD_USER_POSTS_FAILURE, LOAD_USER_POSTS_REQUEST} from '../reducers/post';
 import axios from 'axios';
 
 function addcommentAPI(){
@@ -79,10 +79,60 @@ function* watchLoadMainPosts(){
     yield takeLatest(LOAD_MAIN_POSTS_REQUEST, loaadMainPosts)
 }
 
+//해쉬태그 불러오기
+function loadHashtagPostsAPI(tag){
+    return axios.get(`/hashtag/:${tag}`)
+}
+
+function* loadHashtagPosts(action){
+    try{
+        const result = yield call(loadHashtagPostsAPI, action.data)
+        yield put({
+            type:LOAD_HASHTAG_POSTS_SUCCESS,
+            data:result.data,
+        })
+    }catch(e){
+        console.log(e);
+        yield put({
+            type:LOAD_HASHTAG_POSTS_FAILURE
+        })
+    }
+}
+
+function* watchLoadHashtagPosts(){
+    yield takeLatest(LOAD_HASHTAG_POSTS_REQUEST, loadHashtagPosts)
+}
+
+//남의 유저정보 불러오기
+function loadUserPostsAPI(id){
+    return axios.get(`/user/${id}/posts`)
+}
+
+function* loadUserPosts(action){
+    try{
+        const result = yield call(loadUserPostsAPI,action.data);
+        yield put({
+            type:LOAD_USER_POSTS_SUCCESS,
+            data:result.data,
+        })
+    }catch(e){
+        console.log(e);
+        yield put({
+            type:LOAD_USER_POSTS_FAILURE
+        })
+    }
+}
+
+function* watchLoadUserPosts(){
+    yield takeLatest(LOAD_USER_POSTS_REQUEST,loadUserPosts)
+}
+
 export default function* postSaga(){
     yield all([
         fork(watchAddPost),
         fork(watchAddComment),
         fork(watchLoadMainPosts),
+        fork(watchLoadHashtagPosts),
+        fork(watchLoadUserPosts),
     ]);
 }

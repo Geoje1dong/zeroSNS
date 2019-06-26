@@ -1,7 +1,7 @@
 import React,{useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import PostCard from '../components/PostCard';
-import { loadUserPostsRequestAction } from '../reducers/user';
+import { loadUserPostsRequestAction, loadUserRequestAction } from '../reducers/user';
 import {Card, Avatar} from 'antd';
 
 const User = ({id}) => {
@@ -9,6 +9,9 @@ const User = ({id}) => {
     const {mainPosts} = useSelector(state => state.post)
 
     useDispatch(() => {
+        dispatch(loadUserRequestAction({
+            data:id,
+        }))
         dispatch(loadUserPostsRequestAction({
             data:id,
         }))
