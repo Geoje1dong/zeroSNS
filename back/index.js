@@ -11,7 +11,7 @@ const db = require('./models');
 const userAPIRouter=require('./routes/user');
 const postsAPIRouter=require('./routes/posts');
 const postAPIRouter=require('./routes/post');
-const hashtagAPIRouter=require('./routes/hashtag')
+const hashtagAPIRouter=require('./routes/hashtag');
 
 dotenv.config();
 const app = express();

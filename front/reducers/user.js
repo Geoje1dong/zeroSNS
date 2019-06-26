@@ -68,13 +68,6 @@ export const loadUserAction = {
     type:LOAD_USER_REQUEST,
 }
 
-export const loadUserPostsRequestAction = (data) =>{
-    return{
-        type:LOAD_USER_POSTS_REQUEST,
-        data:data,
-    }
-}
-
 export const loadUserRequestAction = (data) => {
     return{
         type:LOAD_USER_REQUEST,

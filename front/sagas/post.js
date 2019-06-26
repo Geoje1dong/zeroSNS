@@ -1,5 +1,21 @@
 import {all, takeLatest, fork, call, put, delay} from 'redux-saga/effects';
-import {ADD_POST_REQUEST, ADD_POST_SUCCESS, ADD_POST_FAILURE, ADD_COMMENT_REQUEST, ADD_COMMENT_FAILURE, ADD_COMMENT_SUCCESS, LOAD_MAIN_POSTS_REQUEST, LOAD_MAIN_POSTS_FAILURE, LOAD_MAIN_POSTS_SUCCESS, LOAD_HASHTAG_POSTS_REQUEST, LOAD_HASHTAG_POSTS_FAILURE, LOAD_HASHTAG_POSTS_SUCCESS, LOAD_USER_POSTS_SUCCESS, LOAD_USER_POSTS_FAILURE, LOAD_USER_POSTS_REQUEST} from '../reducers/post';
+import {
+    ADD_POST_REQUEST, 
+    ADD_POST_SUCCESS, 
+    ADD_POST_FAILURE, 
+    ADD_COMMENT_REQUEST, 
+    ADD_COMMENT_FAILURE, 
+    ADD_COMMENT_SUCCESS, 
+    LOAD_MAIN_POSTS_REQUEST, 
+    LOAD_MAIN_POSTS_FAILURE, 
+    LOAD_MAIN_POSTS_SUCCESS, 
+    LOAD_HASHTAG_POSTS_REQUEST, 
+    LOAD_HASHTAG_POSTS_FAILURE, 
+    LOAD_HASHTAG_POSTS_SUCCESS, 
+    LOAD_USER_POSTS_SUCCESS, 
+    LOAD_USER_POSTS_FAILURE, 
+    LOAD_USER_POSTS_REQUEST
+} from '../reducers/post';
 import axios from 'axios';
 
 function addcommentAPI(){
@@ -81,7 +97,7 @@ function* watchLoadMainPosts(){
 
 //해쉬태그 불러오기
 function loadHashtagPostsAPI(tag){
-    return axios.get(`/hashtag/:${tag}`)
+    return axios.get(`/hashtag/${tag}`)
 }
 
 function* loadHashtagPosts(action){
@@ -110,7 +126,7 @@ function loadUserPostsAPI(id){
 
 function* loadUserPosts(action){
     try{
-        const result = yield call(loadUserPostsAPI,action.data);
+        const result = yield call(loadUserPostsAPI, action.data);
         yield put({
             type:LOAD_USER_POSTS_SUCCESS,
             data:result.data,

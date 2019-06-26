@@ -5,15 +5,16 @@ const router = express.Router();
 
 router.get('/:tag', async(req, res, next) => {
     try{
-        const posts = await db.Posts.findAll({
+        console.log(req);
+        const posts = await db.Post.findAll({
             include: [{
                 model:db.Hashtag,
-                where:{name : decodeURIComponent(req.params.name)},
-            }.{
+                where:{name : decodeURIComponent(req.params.tag)},
+            },{
                 model:db.User,
                 attributes:['id', 'nickname'],
             }]
-        });
+        });        
         res.json(posts);
     }catch(e){
         console.error(e);

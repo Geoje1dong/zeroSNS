@@ -1,6 +1,7 @@
-import React,{useEffect, useSelector} from 'react';
-import {useDispatch} from 'react-redux';
+import React,{useEffect} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
 import { loadHashtagPostsRequestAction } from '../reducers/post';
+import { LOAD_HASHTAG_POSTS_REQUEST } from '../reducers/post';
 import PostCard from '../components/PostCard';
 
 
@@ -8,24 +9,31 @@ const Hashtag = ({tag}) => {
     const dispatch = useDispatch();
     const {mainPosts} = useSelector(state => state.post);
 
+    // useEffect(() => {
+    //     dispatch(loadHashtagPostsRequestAction({
+    //         data:tag,
+    //     }))
+    // },[]);
+
     useEffect(() => {
-        dispatch(loadHashtagPostsRequestAction({
-            data:tag,
-        }))
-    },[]);
+        dispatch({
+          type: LOAD_HASHTAG_POSTS_REQUEST,
+          data: tag,
+        });
+      }, []);
 
     return(
         <div>
-            {/* {mainPosts.map(c => (
+            {mainPosts.map(c => (
                 <PostCard key={+c.createdAt} post={c} />
-            ))} */}
-            123123
+            ))}
         </div>
     )
 }
 
-Hashtag.getInitialProps = async(context) => {
-    return {tag: context.query.tag}
-};
+Hashtag.getInitialProps = async (context) => {
+    console.log('hashtag getInitialProps', context.query.tag);
+    return { tag: context.query.tag };
+  };
 
 export default Hashtag;

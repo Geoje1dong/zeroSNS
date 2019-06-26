@@ -14,7 +14,7 @@ router.get('/', (req, res) => { //사용자 정보 가져오기
     return res.json(user);
 });
 
-router.get('/:id', (req, res, next) => {    //남의 정보 가져오는것
+router.get('/:id', async(req, res, next) => {    //남의 정보 가져오는것
     try{
         const user = await db.User.findOne({
             where:{id:parseInt(req.params.id, 10)},
@@ -37,7 +37,7 @@ router.get('/:id', (req, res, next) => {    //남의 정보 가져오는것
         jsonUser.Posts = jsonUser.Posts ? jsonUser.Posts.length : 0;
         jsonUser.Followings = jsonUser.Followings ? jsonUser.Followings.length : 0;
         jsonUser.Followers = jsonUser.Followers ? jsonUser.Followers.length : 0;
-        req.json(jsonUser);
+        res.json(jsonUser);
     }catch(e){
         console.error(e);
         next(e)
