@@ -3,7 +3,7 @@ import {Button, Card, Avatar, Icon, List, Input, Form, Comment } from 'antd';
 import PropTypes from 'prop-types';
 import Link from 'next/link';
 import {useSelector, useDispatch} from 'react-redux'
-import {addCommentRequestAction} from '../reducers/post'
+import {addCommentRequestAction, LOAD_COMMENTS_REQUEST} from '../reducers/post'
 import styled from 'styled-components';
 
 const PostCard = ({ post }) => {
@@ -11,9 +11,16 @@ const PostCard = ({ post }) => {
     const [commnetText, setCommentText] = useState('');
     const {me}= useSelector(state => state.user);
     const {commentAdded, isAddingComment} = useSelector(state => state.post);
-    const dispatch = useDispatch();    
-    const onToggleComment = useCallback(() => {
+    const dispatch = useDispatch();
+
+    const onToggleComment = useCallback(() => { //댓글창 토글
         setCommentFormOpend(prev => !prev);
+        if(!commnetFormOpened){
+            dispatch({
+                type:LOAD_COMMENTS_REQUEST,
+                data: post.id,
+            })
+        }
     }, [])
 
     // useCallback 에서 state를 넣을때 []안에 스테이트를 넣어줘야 하는대 객체 넣는건 별로임 그래서 me & me.id
@@ -23,9 +30,10 @@ const PostCard = ({ post }) => {
             return alert('로그인이 필요합니다.');
         }
         dispatch(addCommentRequestAction({
-            postId: post.id
+            postId: post.id,
+            content:commnetText,
         }))
-    }, [me && me.id])
+    }, [me && me.id, commnetText])
 
     useEffect(()=> {
         setCommentText('');
