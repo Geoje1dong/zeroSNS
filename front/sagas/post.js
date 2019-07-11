@@ -17,7 +17,10 @@ import {
     LOAD_USER_POSTS_REQUEST,
     LOAD_COMMENTS_REQUEST,
     LOAD_COMMENTS_FAILURE,
-    LOAD_COMMENTS_SUCCESS
+    LOAD_COMMENTS_SUCCESS,
+    UPLOAD_IMAGES_SUCCESS,
+    UPLOAD_IMAGES_FAILURE,
+    UPLOAD_IMAGES_REQUEST
 } from '../reducers/post';
 
 import axios from 'axios';
@@ -31,7 +34,7 @@ function addcommentAPI(data){
 
 function* addcomment(action){
     try{
-        const result = yield call(addcommentAPI, action.data)
+        const result = yield call(addcommentAPI, action.data);
         yield put({
             type:ADD_COMMENT_SUCCESS,
             data: {
@@ -40,7 +43,7 @@ function* addcomment(action){
             },
         })
     } catch(e){
-        console.log(e);
+        console.error(e);
         yield put({
             type:ADD_COMMENT_FAILURE
         })
@@ -62,14 +65,15 @@ function* loadComment(action){
         yield put({
             type:LOAD_COMMENTS_SUCCESS,
             data: {
-                postId: action.data.postId,
-                comment: result.data,
+                postId: action.data,
+                comments: result.data,
             },
         })
     } catch(e){
         console.log(e);
         yield put({
-            type:LOAD_COMMENTS_FAILURE
+            type:LOAD_COMMENTS_FAILURE,
+            error:e,
         })
     }
 };
@@ -130,6 +134,32 @@ function* watchLoadMainPosts(){
     yield takeLatest(LOAD_MAIN_POSTS_REQUEST, loaadMainPosts)
 }
 
+//이미지 업로드
+function uploadImagesAPI(formData){
+    return axios.post('/post/images', formData, {
+        withCredentials: true,
+    })
+}
+
+function* uploadImages(action){
+    try{
+        const result = yield call(uploadImagesAPI, action.data);
+        yield put({
+            type:UPLOAD_IMAGES_SUCCESS,
+            data:result.data,
+        })
+    }catch(e){
+        console.log(e);
+        yield put({
+            type:UPLOAD_IMAGES_FAILURE
+        })
+    }
+}
+
+function* watchUploadImages(){
+    yield takeLatest(UPLOAD_IMAGES_REQUEST, uploadImages)
+}
+
 //해쉬태그 불러오기
 function loadHashtagPostsAPI(tag){
     return axios.get(`/hashtag/${tag}`)
@@ -186,5 +216,6 @@ export default function* postSaga(){
         fork(watchLoadMainPosts),
         fork(watchLoadHashtagPosts),
         fork(watchLoadUserPosts),
+        fork(watchUploadImages)
     ]);
 }

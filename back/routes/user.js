@@ -4,11 +4,9 @@ const bcrypt = require('bcrypt');
 const passport = require('passport');
 
 const router = express.Router();
+const {isLoggedIn} = require('./middleware');
 
-router.get('/', (req, res) => { //사용자 정보 가져오기
-    if (!req.user) {
-        return res.status(401).send('로그인이 필요합니다.');
-    }
+router.get('/',isLoggedIn, (req, res) => { //사용자 정보 가져오기
     const user = Object.assign({}, req.user.toJSON());
     delete user.password;
     return res.json(user);
@@ -138,6 +136,8 @@ router.get('/:id/posts', async(req, res, next) => {  //유저 포스트
             include: [{
                 model:db.User,
                 attributes:['id', 'nickname'],
+            },{
+                model:db.Image
             }]
         });
         res.json(posts);

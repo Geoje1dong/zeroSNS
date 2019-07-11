@@ -70,13 +70,6 @@ export const addPostRequestAction = data => {
     }
 }
 
-export const addCommentRequestAction = data => {
-    return{
-        type:ADD_COMMENT_REQUEST,
-        data:data,
-    }
-}
-
 export const loadHashtagPostsRequestAction = data => {
     return{
         type:LOAD_HASHTAG_POSTS_REQUEST,
@@ -90,7 +83,7 @@ export const loadMainPostsRequestAction = {
 
 const reducer = (state= initialState, action) => {
     switch(action.type){
-        case ADD_POST_REQUEST:{
+        case ADD_POST_REQUEST:{ //게시글 등록
             return{
                 ...state,
                 isAddingPost:true,
@@ -103,7 +96,8 @@ const reducer = (state= initialState, action) => {
                 ...state,
                 mainPosts: [action.data, ...state.mainPosts],
                 postAdded:true,
-                isAddingPost:false
+                isAddingPost:false,
+                imagePaths:[],
             }
         }
         case ADD_POST_FAILURE:{
@@ -114,7 +108,29 @@ const reducer = (state= initialState, action) => {
                 postAdded:false,
             }
         }
-        case ADD_COMMENT_REQUEST:{
+        case UPLOAD_IMAGES_REQUEST:{    //이미지 업로드
+            return{
+                ...state,
+            }
+        }
+        case UPLOAD_IMAGES_SUCCESS:{
+            return{
+                ...state,
+                imagePaths: [...state.imagePaths, ...action.data]
+            }
+        }
+        case UPLOAD_IMAGES_FAILURE:{
+            return{
+                ...state,
+            }
+        }
+        case REMOVE_IMAGE:{ //이미지 삭제
+            return{
+                ...state,
+                imagePaths: state.imagePaths.filter((v,i) => i !== action.index)
+            }
+        }
+        case ADD_COMMENT_REQUEST:{  // 코멘트 등록
             return{
                 ...state,
                 isAddingComment:true,
@@ -143,9 +159,20 @@ const reducer = (state= initialState, action) => {
                 commentAdded:false,
             }
         }
-        case LOAD_MAIN_POSTS_REQUEST:
-        case LOAD_HASHTAG_POSTS_REQUEST:
-        case LOAD_USER_POSTS_REQUEST:{
+        case LOAD_COMMENTS_SUCCESS: {   // 코멘트 불러오기
+        const postIndex = state.mainPosts.findIndex(v => v.id === action.data.postId);
+        const post = state.mainPosts[postIndex];
+        const Comments = action.data.comments;
+        const mainPosts = [...state.mainPosts];
+        mainPosts[postIndex] = { ...post, Comments };
+        return {
+            ...state,
+            mainPosts,
+        };
+        }
+        case LOAD_MAIN_POSTS_REQUEST:   //메인 포스트 불러오기
+        case LOAD_HASHTAG_POSTS_REQUEST:    //해쉬태그 불러오기
+        case LOAD_USER_POSTS_REQUEST:{  //유저 프로필 불러오기
             return{
                 ...state,
                 mainPosts: [],

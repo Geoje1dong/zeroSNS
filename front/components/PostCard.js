@@ -1,14 +1,13 @@
 import React,{ useState, useCallback,useEffect } from 'react';
 import {Button, Card, Avatar, Icon, List, Input, Form, Comment } from 'antd';
-import PropTypes from 'prop-types';
 import Link from 'next/link';
 import {useSelector, useDispatch} from 'react-redux'
-import {addCommentRequestAction, LOAD_COMMENTS_REQUEST} from '../reducers/post'
+import {LOAD_COMMENTS_REQUEST, ADD_COMMENT_REQUEST} from '../reducers/post'
 import styled from 'styled-components';
 
 const PostCard = ({ post }) => {
     const [commnetFormOpened, setCommentFormOpend] = useState(false);
-    const [commnetText, setCommentText] = useState('');
+    const [commentText, setCommentText] = useState('');
     const {me}= useSelector(state => state.user);
     const {commentAdded, isAddingComment} = useSelector(state => state.post);
     const dispatch = useDispatch();
@@ -29,11 +28,14 @@ const PostCard = ({ post }) => {
         if(!me){
             return alert('로그인이 필요합니다.');
         }
-        dispatch(addCommentRequestAction({
-            postId: post.id,
-            content:commnetText,
-        }))
-    }, [me && me.id, commnetText])
+        return dispatch({
+            type: ADD_COMMENT_REQUEST,
+            data: {
+                postId: post.id,
+                content: commentText,
+            },
+        });
+    }, [me && me.id, commentText]);
 
     useEffect(()=> {
         setCommentText('');
@@ -47,7 +49,7 @@ const PostCard = ({ post }) => {
         <>
             <StyledBox>
                 <Card
-                    key={+post.createdAt}
+                    key={+post.id}
                     cover={post.img && <img alt='example' src={post.img} />}
                     actions={[
                         <Icon type='retweet' key='retweet' />,
@@ -80,7 +82,7 @@ const PostCard = ({ post }) => {
                     <>
                         <Form onSubmit={onSubmitComment}>
                             <Form.Item>
-                                <Input.TextArea rows={4} value={commnetText} onChange={onChangeCommentText}/>
+                                <Input.TextArea rows={4} value={commentText} onChange={onChangeCommentText}/>
                             </Form.Item>
                             <Button type='primary' htmlType="submit" loading={isAddingComment}>댓글 등록</Button>
                         </Form>

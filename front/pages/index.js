@@ -23,7 +23,7 @@ const Home = () => {
             {me ?
                 <div>
                     <PostForm />
-                    {mainPosts.map((c)=> {return <PostCard key={c} post={c}/>})}
+                    {mainPosts.map((c)=> {return <PostCard key={c.id} post={c}/>})}
                 </div>
                 
             :<LoginFrom />}
