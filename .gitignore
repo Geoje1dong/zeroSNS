@@ -139,3 +139,5 @@ react-nodebird.pem
 
 # npm
 package-lock.json
+
+.uploads
