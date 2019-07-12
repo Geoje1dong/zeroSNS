@@ -4,6 +4,7 @@ import Link from 'next/link';
 import {useSelector, useDispatch} from 'react-redux'
 import {LOAD_COMMENTS_REQUEST, ADD_COMMENT_REQUEST} from '../reducers/post'
 import styled from 'styled-components';
+import PostImages from './PostImages';
 
 const PostCard = ({ post }) => {
     const [commnetFormOpened, setCommentFormOpend] = useState(false);
@@ -50,7 +51,8 @@ const PostCard = ({ post }) => {
             <StyledBox>
                 <Card
                     key={+post.id}
-                    cover={post.img && <img alt='example' src={post.img} />}
+                    // cover={post.Images[0] && <img alt='example' src={`http://localhost:8080/${post.Images[0].src}`} />}
+                    cover={post.Images[0] && <PostImages images={post.Images}/>}
                     actions={[
                         <Icon type='retweet' key='retweet' />,
                         <Icon type='heart' key='heart' />,
