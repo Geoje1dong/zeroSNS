@@ -20,7 +20,13 @@ import {
     LOAD_COMMENTS_SUCCESS,
     UPLOAD_IMAGES_SUCCESS,
     UPLOAD_IMAGES_FAILURE,
-    UPLOAD_IMAGES_REQUEST
+    UPLOAD_IMAGES_REQUEST,
+    UNLIKE_POST_REQUEST,
+    UNLIKE_POST_FAILURE,
+    UNLIKE_POST_SUCCESS,
+    LIKE_POST_REQUEST,
+    LIKE_POST_FAILURE,
+    LIKE_POST_SUCCESS
 } from '../reducers/post';
 
 import axios from 'axios';
@@ -28,7 +34,7 @@ import axios from 'axios';
 // 코멘트 등록
 function addcommentAPI(data){
     return axios.post(`/post/${data.postId}/comment`, {content: data.content}, {
-        withCredentials: true,
+        withCredentials: true,  // 크로스 사이트 엑세스 제어 요청 여부
     })
 }
 
@@ -208,6 +214,64 @@ function* watchLoadUserPosts(){
     yield takeLatest(LOAD_USER_POSTS_REQUEST,loadUserPosts)
 }
 
+//좋아요
+function likePostAPI(postId){
+    return axios.post(`/post/${postId}/like`, {}, {
+        withCredentials:true,
+    });
+}
+
+function* likePost(action){
+    try{
+        const result = yield call(likePostAPI, action.data);
+        yield put({
+            type:LIKE_POST_SUCCESS,
+            data:{
+                postId: action.data,
+                userId: result.data.userId
+            },
+        })
+    }catch(e){
+        console.log(e);
+        yield put({
+            type:LIKE_POST_FAILURE
+        })
+    }
+}
+
+function* watchLikePost(){
+    yield takeLatest(LIKE_POST_REQUEST,likePost)
+}
+
+//좋아요 취소
+function unLikePostAPI(postId){
+    return axios.delete(`/post/${postId}/like`, {
+        withCredentials:true,
+    });
+}
+
+function* unLikePost(action){
+    try{
+        const result = yield call(unLikePostAPI, action.data);
+        yield put({
+            type:UNLIKE_POST_SUCCESS,
+            data:{
+                postId: action.data,
+                userId: result.data.userId
+            },
+        })
+    }catch(e){
+        console.log(e);
+        yield put({
+            type:UNLIKE_POST_FAILURE
+        })
+    }
+}
+
+function* watchUnlikePost(){
+    yield takeLatest(UNLIKE_POST_REQUEST,unLikePost)
+}
+
 export default function* postSaga(){
     yield all([
         fork(watchAddPost),
@@ -216,6 +280,8 @@ export default function* postSaga(){
         fork(watchLoadMainPosts),
         fork(watchLoadHashtagPosts),
         fork(watchLoadUserPosts),
-        fork(watchUploadImages)
+        fork(watchUploadImages),
+        fork(watchLikePost),
+        fork(watchUnlikePost)
     ]);
 }

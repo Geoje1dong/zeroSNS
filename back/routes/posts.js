@@ -11,6 +11,11 @@ router.get('/', async(req, res, next) => {   //게시글 가져오기
                 attributes:['id', 'nickname'],
             },{
                 model:db.Image
+            },{
+                model:db.User,
+                through:'Like',
+                as:'Likers',
+                attributes:['id']
             }],
             order:[['createdAt', 'DESC'], ['updatedAt', 'ASC']],  //DESC는 내림차순, ASC는 올림차순
         });

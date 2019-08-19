@@ -14,18 +14,23 @@ const ImagesZoom = ({images, onClose}) => {
           <Icon type="close" onClick={onClose} />
         </div>
         <div>
-          <Slick>
-            {images.map((v) => {
+          <Slick
+            initialSlide={0}
+            afterChange={(slide) => setCurrentSlide(slide)}
+            infinit={false}
+            dots={true}
+          >
+            {images.map((image, index) => {
               return(
-                <div>
-                  <img src={`http://localhost:8080/${v.src}`}/>
+                <div key={index}>
+                  <img src={`http://localhost:8080/${image.src}`}/>
                 </div>
               )
             })}
           </Slick>
-          <span>
+          {/* <span>
             {currentSlide + 1} / {images.length}
-          </span>
+          </span> */}
         </div>
       </Article>
     </ImagesZoomBox>

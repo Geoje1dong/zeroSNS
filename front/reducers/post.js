@@ -4,9 +4,9 @@ export const initialState = {
     addPostErrorReason: false, //포스트 업로드 실패 사유
     isAddingPost: false,    //포스트 업로드 중
     postAdded: false, //포스트 업로드 성공
-    isAddingComment: false,
-    addPostErrorReason: '',
-    commentAdded:false,
+    isAddingComment: false, //코멘트 업로드 중
+    addPostErrorReason: '', //코멘트 업로드 실패 사유
+    commentAdded:false, //코멘트 업로드 성공
 }
 
 export const LOAD_MAIN_POSTS_REQUEST = 'LOAD_MAIN_POSTS_REQUEST';   // 로드 메인 포스터
@@ -160,15 +160,57 @@ const reducer = (state= initialState, action) => {
             }
         }
         case LOAD_COMMENTS_SUCCESS: {   // 코멘트 불러오기
-        const postIndex = state.mainPosts.findIndex(v => v.id === action.data.postId);
-        const post = state.mainPosts[postIndex];
-        const Comments = action.data.comments;
-        const mainPosts = [...state.mainPosts];
-        mainPosts[postIndex] = { ...post, Comments };
-        return {
-            ...state,
-            mainPosts,
-        };
+            const postIndex = state.mainPosts.findIndex(v => v.id === action.data.postId);
+            const post = state.mainPosts[postIndex];
+            const Comments = action.data.comments;
+            const mainPosts = [...state.mainPosts];
+            mainPosts[postIndex] = { ...post, Comments };
+            return {
+                ...state,
+                mainPosts,
+            };
+        }
+        case LIKE_POST_REQUEST:{ //좋아요 등록
+            return{
+                ...state,
+            }
+        }
+        case LIKE_POST_SUCCESS:{
+            const postIndex = state.mainPosts.findIndex(post => post.id === action.data.postId);
+            const post = state.mainPosts[postIndex];
+            const Likers = [{id:action.data.userId}, ...post.Likers];
+            const mainPosts = [...state.mainPosts];
+            mainPosts[postIndex] = {...post, Likers};
+            return{
+                ...state,
+                mainPosts
+            }
+        }
+        case LIKE_POST_FAILURE:{
+            return{
+                ...state,
+            }
+        }
+        case UNLIKE_POST_REQUEST:{ //좋아요 취소
+            return{
+                ...state,
+            }
+        }
+        case UNLIKE_POST_SUCCESS:{
+            const postIndex = state.mainPosts.findIndex(post => post.id === action.data.postId);
+            const post = state.mainPosts[postIndex];
+            const Likers = post.Likers.filter(post => post.id !== action.data.userId);
+            const mainPosts = [...state.mainPosts];
+            mainPosts[postIndex] = {...post, Likers};
+            return{
+                ...state,
+                mainPosts
+            }
+        }
+        case UNLIKE_POST_FAILURE:{
+            return{
+                ...state,
+            }
         }
         case LOAD_MAIN_POSTS_REQUEST:   //메인 포스트 불러오기
         case LOAD_HASHTAG_POSTS_REQUEST:    //해쉬태그 불러오기

@@ -2,7 +2,7 @@ import React,{ useState, useCallback,useEffect } from 'react';
 import {Button, Card, Avatar, Icon, List, Input, Form, Comment } from 'antd';
 import Link from 'next/link';
 import {useSelector, useDispatch} from 'react-redux'
-import {LOAD_COMMENTS_REQUEST, ADD_COMMENT_REQUEST} from '../reducers/post'
+import {LOAD_COMMENTS_REQUEST, ADD_COMMENT_REQUEST, UNLIKE_POST_REQUEST, LIKE_POST_REQUEST} from '../reducers/post'
 import styled from 'styled-components';
 import PostImages from './PostImages';
 
@@ -12,6 +12,8 @@ const PostCard = ({ post }) => {
     const {me}= useSelector(state => state.user);
     const {commentAdded, isAddingComment} = useSelector(state => state.post);
     const dispatch = useDispatch();
+    
+    const liked = me && post.Likers && post.Likers.find(liker => liker.id === me.id);
 
     const onToggleComment = useCallback(() => { //댓글창 토글
         setCommentFormOpend(prev => !prev);
@@ -46,6 +48,23 @@ const PostCard = ({ post }) => {
         setCommentText(e.target.value);
     }, [])
 
+    const onToggleLike = useCallback(() => {
+        if(!me){
+            return alert('로그인이 필요합니다.')
+        }
+        if(liked){   //좋아요 누른 상태
+            dispatch({
+                type:UNLIKE_POST_REQUEST,
+                data:post.id,
+            })
+        }else{  //좋아요 누르지 않는 상태
+            dispatch({
+                type:LIKE_POST_REQUEST,
+                data:post.id,
+            })
+        }
+    }, [me && me.id, post && post.id, liked])
+
     return(
         <>
             <StyledBox>
@@ -55,11 +74,10 @@ const PostCard = ({ post }) => {
                     cover={post.Images[0] && <PostImages images={post.Images}/>}
                     actions={[
                         <Icon type='retweet' key='retweet' />,
-                        <Icon type='heart' key='heart' />,
+                        <Icon type='heart' key='heart' theme={liked ? 'twoTone' : 'outlined'} twoToneColor="#eb2f96" onClick={onToggleLike}/>,
                         <Icon type='message' key='message' onClick={onToggleComment} />,
                         <Icon type='ellipsis' key='ellipsis' />,
                     ]}
-                    extra={<Button>팔로우</Button>}
                 >
                     <Card.Meta 
                         avatar={
@@ -67,7 +85,9 @@ const PostCard = ({ post }) => {
                         }
                         title={post.User.nickname}
                         description={(
-                            <div>
+                            
+                            <HashTagBox>
+                                <Button>팔로우</Button>
                                 {post.content.split(/(#[^\s]+)/g).map((v) => {
                                     if(v.match(/#[^\s]+/)){
                                         return(
@@ -76,7 +96,7 @@ const PostCard = ({ post }) => {
                                     }
                                     return v;
                                 })}
-                            </div>
+                            </HashTagBox>
                         )}
                     />
                 </Card>
@@ -111,6 +131,17 @@ const PostCard = ({ post }) => {
 
 const StyledBox = styled.div`
     margin-bottom:40px;
+    .ant-card-meta{
+        position:relative;
+    }
+`
+
+const HashTagBox = styled.div`
+    >button{
+        position:absolute;
+        right:0;
+        top:0;
+    }
 `
 
 // PostCard.PropTypes = {

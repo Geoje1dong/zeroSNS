@@ -48,6 +48,7 @@ const StyledChildrenBox = styled.div`
     flex:1;
     width:100%;
     margin-right:32px;
+    max-width:614px;
 `
 
 const StyledSideBox = styled.div`

@@ -28,7 +28,7 @@ router.get('/:id', async(req, res, next) => {    //남의 정보 가져오는것
                 model:db.User,
                 attributes:['id'],
                 as:'Followers'
-            }],
+            },],
             attributes:['id', 'nickname'],
         });
         const jsonUser = user.toJSON();
@@ -138,6 +138,11 @@ router.get('/:id/posts', async(req, res, next) => {  //유저 포스트
                 attributes:['id', 'nickname'],
             },{
                 model:db.Image
+            },{
+                model:db.User,
+                through:'Like',
+                as:'Likers',
+                attributes:['id']
             }]
         });
         res.json(posts);
