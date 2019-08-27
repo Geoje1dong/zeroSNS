@@ -2,9 +2,10 @@ import React,{ useState, useCallback,useEffect } from 'react';
 import {Button, Card, Avatar, Icon, List, Input, Form, Comment } from 'antd';
 import Link from 'next/link';
 import {useSelector, useDispatch} from 'react-redux'
-import {LOAD_COMMENTS_REQUEST, ADD_COMMENT_REQUEST, UNLIKE_POST_REQUEST, LIKE_POST_REQUEST} from '../reducers/post'
+import {LOAD_COMMENTS_REQUEST, ADD_COMMENT_REQUEST, UNLIKE_POST_REQUEST, LIKE_POST_REQUEST, RETWEET_REQUEST} from '../reducers/post'
 import styled from 'styled-components';
 import PostImages from './PostImages';
+import PostCardContent from './PostCardContent'
 
 const PostCard = ({ post }) => {
     const [commnetFormOpened, setCommentFormOpend] = useState(false);
@@ -65,41 +66,71 @@ const PostCard = ({ post }) => {
         }
     }, [me && me.id, post && post.id, liked])
 
+    const onRetweet = useCallback(() => {
+        if(!me){
+            return alert('로그인이 필요합니다.');
+        }
+        return dispatch({
+            type:RETWEET_REQUEST,
+            data:post.id,
+        })
+    }, [me && me.id, post.id])
+
     return(
         <>
             <StyledBox>
-                <Card
-                    key={+post.id}
-                    // cover={post.Images[0] && <img alt='example' src={`http://localhost:8080/${post.Images[0].src}`} />}
-                    cover={post.Images[0] && <PostImages images={post.Images}/>}
-                    actions={[
-                        <Icon type='retweet' key='retweet' />,
-                        <Icon type='heart' key='heart' theme={liked ? 'twoTone' : 'outlined'} twoToneColor="#eb2f96" onClick={onToggleLike}/>,
-                        <Icon type='message' key='message' onClick={onToggleComment} />,
-                        <Icon type='ellipsis' key='ellipsis' />,
-                    ]}
-                >
-                    <Card.Meta 
-                        avatar={
-                            <Link href={{pathname:'/user', query: {id:post.User.id}}} as={`/user/${post.User.id}`}><a><Avatar>{post.User.nickname[0]}</Avatar></a></Link>
-                        }
-                        title={post.User.nickname}
-                        description={(
-                            
-                            <HashTagBox>
-                                <Button>팔로우</Button>
-                                {post.content.split(/(#[^\s]+)/g).map((v) => {
-                                    if(v.match(/#[^\s]+/)){
-                                        return(
-                                            <Link href={{pathname:'/hashtag', query: {tag:v.slice(1)}}} key={v} as={`/hashtag/${v.slice(1)}`}><a>{v}</a></Link>
-                                        )
-                                    }
-                                    return v;
-                                })}
-                            </HashTagBox>
-                        )}
-                    />
-                </Card>
+                {post.RetweetId && post.Retweet ? (
+                    <Card
+                        key={+post.id}
+                        cover={post.Retweet.Images[0] && <PostImages images={post.Retweet.Images}/>}
+                        actions={[
+                            <Icon type='retweet' key='retweet' onClick={onRetweet}/>,
+                            <Icon type='heart' key='heart' theme={liked ? 'twoTone' : 'outlined'} twoToneColor="#eb2f96" onClick={onToggleLike}/>,
+                            <Icon type='message' key='message' onClick={onToggleComment} />,
+                            <Icon type='ellipsis' key='ellipsis' />,
+                        ]}
+                    >
+                        <p><Icon type='retweet' key='retweet'/><Link href={{pathname:'/user', query: {id:post.User.id}}} as={`/user/${post.User.id}`}><a>{post.User.nickname}</a></Link>님이 리트윗하셨습니다.</p>
+                        <Card.Meta 
+                            avatar={
+                                <Link href={{pathname:'/user', query: {id:post.Retweet.User.id}}} as={`/user/${post.Retweet.User.id}`}><a><Avatar>{post.Retweet.User.nickname[0]}</Avatar></a></Link>
+                            }
+                            title={post.Retweet.User.nickname}
+                            description={(
+                                <HashTagBox>
+                                    <Button>팔로우</Button>
+                                    <PostCardContent postData={post.Retweet.content}/>
+                                </HashTagBox>
+                            )}
+                        />
+                    </Card>
+                ) : (
+                    <Card
+                        key={+post.id}
+                        // cover={post.Images[0] && <img alt='example' src={`http://localhost:8080/${post.Images[0].src}`} />}
+                        cover={post.Images[0] && <PostImages images={post.Images}/>}
+                        actions={[
+                            <Icon type='retweet' key='retweet' onClick={onRetweet}/>,
+                            <Icon type='heart' key='heart' theme={liked ? 'twoTone' : 'outlined'} twoToneColor="#eb2f96" onClick={onToggleLike}/>,
+                            <Icon type='message' key='message' onClick={onToggleComment} />,
+                            <Icon type='ellipsis' key='ellipsis' />,
+                        ]}
+                    >
+                        <Card.Meta 
+                            avatar={
+                                <Link href={{pathname:'/user', query: {id:post.User.id}}} as={`/user/${post.User.id}`}><a><Avatar>{post.User.nickname[0]}</Avatar></a></Link>
+                            }
+                            title={post.User.nickname}
+                            description={(
+                                <HashTagBox>
+                                    <Button>팔로우</Button>
+                                    <PostCardContent postData={post.content}/>
+                                </HashTagBox>
+                            )}
+                        />
+                    </Card>
+                )}
+                
                 {commnetFormOpened && (
                     <>
                         <Form onSubmit={onSubmitComment}>

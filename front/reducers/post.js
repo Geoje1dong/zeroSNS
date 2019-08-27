@@ -212,6 +212,22 @@ const reducer = (state= initialState, action) => {
                 ...state,
             }
         }
+        case RETWEET_REQUEST:{ //retweet
+            return{
+                ...state,
+            }
+        }
+        case RETWEET_SUCCESS:{
+            return{
+                ...state,
+                mainPosts: [action.data, ...state.mainPosts],
+            }
+        }
+        case RETWEET_FAILURE:{
+            return{
+                ...state,
+            }
+        }
         case LOAD_MAIN_POSTS_REQUEST:   //메인 포스트 불러오기
         case LOAD_HASHTAG_POSTS_REQUEST:    //해쉬태그 불러오기
         case LOAD_USER_POSTS_REQUEST:{  //유저 프로필 불러오기

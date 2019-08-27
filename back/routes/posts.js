@@ -16,6 +16,15 @@ router.get('/', async(req, res, next) => {   //게시글 가져오기
                 through:'Like',
                 as:'Likers',
                 attributes:['id']
+            },{
+                model:db.Post,
+                as:'Retweet',
+                include:[{
+                    model:db.User,
+                    attributes:['id', 'nickname']
+                },{
+                    model:db.Image
+                }]
             }],
             order:[['createdAt', 'DESC'], ['updatedAt', 'ASC']],  //DESC는 내림차순, ASC는 올림차순
         });
