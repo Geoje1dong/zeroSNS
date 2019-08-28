@@ -77,6 +77,48 @@ export const loadUserRequestAction = (data) => {
 
 const reducer = (state = initialState, action) => {
     switch(action.type){
+        case FOLLOW_USER_REQUEST: { //유저 팔로워
+            return{
+                ...state,
+            }
+        }
+        case FOLLOW_USER_SUCCESS: {
+            return{
+                ...state,
+                me:{
+                    ...state.me,
+                    Followings:[{
+                        id:action.data,
+                        ...state.me.Followings
+                    }]
+                }
+            }
+        }
+        case FOLLOW_USER_FAILURE: {
+            return{
+                ...state,
+            }
+        }
+        case UNFOLLOW_USER_REQUEST: { //유저 팔로워 취소
+            return{
+                ...state,
+            }
+        }
+        case UNFOLLOW_USER_SUCCESS: {
+            return{
+                ...state,
+                me:{
+                    ...state.me,
+                    Followings:state.me.Followings.filter(user => user.id !== action.data),
+                },
+                followingList: state.followingList.filter(user => user.id !== action.data),
+            }
+        }
+        case UNFOLLOW_USER_FAILURE: {
+            return{
+                ...state,
+            }
+        }
         case LOG_IN_REQUEST: {
             return{
                 ...state,

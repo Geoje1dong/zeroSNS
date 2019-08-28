@@ -6,6 +6,7 @@ import {LOAD_COMMENTS_REQUEST, ADD_COMMENT_REQUEST, UNLIKE_POST_REQUEST, LIKE_PO
 import styled from 'styled-components';
 import PostImages from './PostImages';
 import PostCardContent from './PostCardContent'
+import { FOLLOW_USER_REQUEST, UNFOLLOW_USER_REQUEST } from '../reducers/user';
 
 const PostCard = ({ post }) => {
     const [commnetFormOpened, setCommentFormOpend] = useState(false);
@@ -76,6 +77,20 @@ const PostCard = ({ post }) => {
         })
     }, [me && me.id, post.id])
 
+    const onFollow = useCallback(userId => () => {
+        dispatch({
+            type:FOLLOW_USER_REQUEST,
+            data:userId
+        })
+    }, [])
+
+    const onUnfollow = useCallback(userId => () => {
+        dispatch({
+            type:UNFOLLOW_USER_REQUEST,
+            data:userId
+        })
+    }, [])
+
     return(
         <>
             <StyledBox>
@@ -98,7 +113,10 @@ const PostCard = ({ post }) => {
                             title={post.Retweet.User.nickname}
                             description={(
                                 <HashTagBox>
-                                    <Button>팔로우</Button>
+                                    {
+                                        !me || post.User.id === me.id ? null
+                                        : me.Followings && me.Followings.find(user => user.id === post.User.id) ?<Button onClick={onUnfollow(post.User.id)}>언팔로우</Button> : <Button onClick={onFollow(post.User.id)}>팔로우</Button>
+                                    }
                                     <PostCardContent postData={post.Retweet.content}/>
                                 </HashTagBox>
                             )}
@@ -123,7 +141,10 @@ const PostCard = ({ post }) => {
                             title={post.User.nickname}
                             description={(
                                 <HashTagBox>
-                                    <Button>팔로우</Button>
+                                    {
+                                        !me || post.User.id === me.id ? null
+                                        : me.Followings && me.Followings.find(user => user.id === post.User.id) ?<Button onClick={onUnfollow(post.User.id)}>언팔로우</Button> : <Button onClick={onFollow(post.User.id)}>팔로우</Button>
+                                    }
                                     <PostCardContent postData={post.content}/>
                                 </HashTagBox>
                             )}

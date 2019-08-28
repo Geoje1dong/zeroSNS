@@ -15,7 +15,13 @@ import {
     LOG_OUT_SUCCESS, 
     LOAD_USER_REQUEST, 
     LOAD_USER_SUCCESS, 
-    LOAD_USER_FAILURE
+    LOAD_USER_FAILURE,
+    FOLLOW_USER_SUCCESS,
+    FOLLOW_USER_REQUEST,
+    FOLLOW_USER_FAILURE,
+    UNFOLLOW_USER_REQUEST,
+    UNFOLLOW_USER_FAILURE,
+    UNFOLLOW_USER_SUCCESS
 } from '../reducers/user';
 
 //로그아웃
@@ -122,11 +128,68 @@ function* watchLoadUser(){
     yield takeEvery(LOAD_USER_REQUEST,loadUser)
 }
 
+//유저 팔로우
+function followAPI(userId){
+    return axios.post(`/user/${userId}/follow`, {}, {
+        withCredentials: true,
+    });
+}
+
+function* follow(action){
+    try{
+        const result = yield call(followAPI, action.data);
+        console.log(result);
+        yield put({
+            type:FOLLOW_USER_SUCCESS,
+            data:result.data
+        });
+    }catch(e){
+        console.log(e);
+        yield put({
+            type:FOLLOW_USER_FAILURE,
+            error:e,
+        });
+    }
+}
+
+function* watchFollow(){
+    yield takeEvery(FOLLOW_USER_REQUEST,follow)
+}
+
+//언팔로우
+function unFollowAPI(userId){
+    return axios.delete(`/user/${userId}/follow`, {
+        withCredentials: true,
+    });
+}
+
+function* unFollow(action){
+    try{
+        const result = yield call(unFollowAPI, action.data);
+        yield put({
+            type:UNFOLLOW_USER_SUCCESS,
+            data:result.data
+        });
+    }catch(e){
+        console.log(e);
+        yield put({
+            type:UNFOLLOW_USER_FAILURE,
+            error:e,
+        });
+    }
+}
+
+function* watchUnFollow(){
+    yield takeEvery(UNFOLLOW_USER_REQUEST,unFollow)
+}
+
 export default function* userSaga(){
     yield all([
         fork(watchLogin),   //로그인
         fork(watchLogout),  //로그아웃
         fork(watchSignUp),  //회원가입
         fork(watchLoadUser),    //내정보 불러오기
+        fork(watchFollow),    //팔로우
+        fork(watchUnFollow),    //언팔로우
     ]);
 }

@@ -114,12 +114,30 @@ router.get('/:id/follow', (req, res) => { //유저 팔로워
 
 });
 
-router.post('/:id/follow', (req, res) => {    //유저 팔로워 
-
+router.post('/:id/follow', isLoggedIn, async(req, res, next) => {    //유저 팔로워 
+    try{
+        const me = await db.User.findOne({
+            where: {id: req.user.id},
+        });
+        await me.addFollowing(req.params.id);
+        res.send(req.params.id);
+    }catch(e){
+        console.error(e);
+        next(e);
+    }
 });
 
-router.delete('/:id/follow', (req, res) => {  //유저 팔로우 삭제
-
+router.delete('/:id/follow', isLoggedIn, async(req, res, next) => {  //유저 팔로우 삭제
+    try{
+        const me = await db.User.findOne({
+            where: {id: req.user.id}
+        })
+        await me.removeFollowing(req.params.id);
+        res.send(req.params.id);
+    }catch(e){
+        console.error(e);
+        next(e);
+    }
 });
 
 router.delete('/:id/follower', (req, res) => {    //유저 팔로워 삭제
