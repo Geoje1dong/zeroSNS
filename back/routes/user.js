@@ -110,10 +110,6 @@ router.post('/login', (req, res, next) => { //로그인
     })(req,res,next);
 });
 
-router.get('/:id/follow', (req, res) => { //유저 팔로워
-
-});
-
 router.post('/:id/follow', isLoggedIn, async(req, res, next) => {    //유저 팔로워 
     try{
         const me = await db.User.findOne({
@@ -140,8 +136,47 @@ router.delete('/:id/follow', isLoggedIn, async(req, res, next) => {  //유저 �
     }
 });
 
-router.delete('/:id/follower', (req, res) => {    //유저 팔로워 삭제
+router.get('/:id/followings', isLoggedIn, async(req, res, next) => { //유저 팔로잉 정보
+    try{
+        const user = await db.User.findOne({
+            where:{id:parseInt(req.params.id, 10)},
+        })
+        const followings = await user.getFollowings({
+            attributes:['id', 'nickname']
+        })
+        res.json(followings);
+    }catch(e){
+        console.error(e);
+        next(e);
+    }
+});
 
+router.get('/:id/followers', isLoggedIn, async(req, res, next) => { //유저 팔로워 정보
+    try{
+        const user = await db.User.findOne({
+            where:{id:parseInt(req.params.id, 10)}
+        })
+        const followers = await user.getFollowers({
+            attributes:['id', 'nickname']
+        })
+        res.json(followers)
+    }catch(e){
+        console.error(e);
+        next(e);
+    }
+});
+
+router.delete('/:id/follower', isLoggedIn, async(req, res, next) => {    //유저 팔로워 삭제
+    try{
+        const me = await db.User.findOne({
+            where:{id:req.user.id}
+        })
+        await me.removeFollower(req.params.id);
+        res.send(req.params.id);
+    }catch(e){
+        console.error(e);
+        next(e);
+    }
 });
 
 router.get('/:id/posts', async(req, res, next) => {  //유저 포스트

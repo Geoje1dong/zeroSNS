@@ -21,7 +21,16 @@ import {
     FOLLOW_USER_FAILURE,
     UNFOLLOW_USER_REQUEST,
     UNFOLLOW_USER_FAILURE,
-    UNFOLLOW_USER_SUCCESS
+    UNFOLLOW_USER_SUCCESS,
+    LOAD_FOLLOWINGS_SUCCESS,
+    LOAD_FOLLOWINGS_FAILURE,
+    LOAD_FOLLOWINGS_REQUEST,
+    REMOVE_FOLLOW_USER_SUCCESS,
+    REMOVE_FOLLOW_USER_FAILURE,
+    REMOVE_FOLLOW_USER_REQUEST,
+    LOAD_FOLLOWERS_SUCCESS,
+    LOAD_FOLLOWERS_FAILURE,
+    LOAD_FOLLOWERS_REQUEST
 } from '../reducers/user';
 
 //로그아웃
@@ -183,6 +192,87 @@ function* watchUnFollow(){
     yield takeEvery(UNFOLLOW_USER_REQUEST,unFollow)
 }
 
+//나의 팔로잉 정보 불러오기
+function loadFollowingsAPI(userId){
+    return axios.get(`/user/${userId}/followings`, {
+        withCredentials: true,
+    });
+}
+
+function* loadFollowings(action){
+    try{
+        const result = yield call(loadFollowingsAPI, action.data);
+        yield put({
+            type:LOAD_FOLLOWINGS_SUCCESS,
+            data:result.data
+        });
+    }catch(e){
+        console.log(e);
+        yield put({
+            type:LOAD_FOLLOWINGS_FAILURE,
+            error:e,
+        });
+    }
+}
+
+function* watchLoadFollowings(){
+    yield takeEvery(LOAD_FOLLOWINGS_REQUEST,loadFollowings)
+}
+
+//나의 팔로워 정보 불러오기
+function loadFollowersAPI(userId){
+    return axios.get(`/user/${userId}/followers`, {
+        withCredentials: true,
+    });
+}
+
+function* loadFollowers(action){
+    try{
+        const result = yield call(loadFollowersAPI, action.data);
+        yield put({
+            type:LOAD_FOLLOWERS_SUCCESS,
+            data:result.data
+        });
+    }catch(e){
+        console.log(e);
+        yield put({
+            type:LOAD_FOLLOWERS_FAILURE,
+            error:e,
+        });
+    }
+}
+
+function* watchLoadFollowers(){
+    yield takeEvery(LOAD_FOLLOWERS_REQUEST,loadFollowers)
+}
+
+//내 팔로워 삭제
+function removeFollowAPI(userId){
+    return axios.delete(`/user/${userId}/follower`, {
+        withCredentials: true,
+    });
+}
+
+function* removeFollow(action){
+    try{
+        const result = yield call(removeFollowAPI, action.data);
+        yield put({
+            type:REMOVE_FOLLOW_USER_SUCCESS,
+            data:result.data
+        });
+    }catch(e){
+        console.log(e);
+        yield put({
+            type:REMOVE_FOLLOW_USER_FAILURE,
+            error:e,
+        });
+    }
+}
+
+function* watchRemoveFollow(){
+    yield takeEvery(REMOVE_FOLLOW_USER_REQUEST,removeFollow)
+}
+
 export default function* userSaga(){
     yield all([
         fork(watchLogin),   //로그인
@@ -191,5 +281,8 @@ export default function* userSaga(){
         fork(watchLoadUser),    //내정보 불러오기
         fork(watchFollow),    //팔로우
         fork(watchUnFollow),    //언팔로우
+        fork(watchRemoveFollow),    //내가 팔로워 삭제
+        fork(watchLoadFollowers),    //내 팔로워 정보 불러오기
+        fork(watchLoadFollowings),    //내 팔로잉 정보 불러오기
     ]);
 }

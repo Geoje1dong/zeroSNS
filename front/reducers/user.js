@@ -28,9 +28,13 @@ export const LOG_OUT_REQUEST = 'LOG_OUT_REQUEST';   //로그 아웃
 export const LOG_OUT_SUCCESS = 'LOG_OUT_SUCCESS';
 export const LOG_OUT_FAILURE = 'LOG_OUT_FAILURE';
 
-export const LOAD_FOLLOW_REQUEST = 'LOAD_FOLLOW_REQUEST';  // 나의 팔로우 팔로워 로드
-export const LOAD_FOLLOW_SUCCESS = 'LOAD_FOLLOW_SUCCESS';
-export const LOAD_FOLLOW_FAILURE = 'LOAD_FOLLOW_FAILURE';
+export const LOAD_FOLLOWERS_REQUEST = 'LOAD_FOLLOWERS_REQUEST';  // 나의 팔로워 로드
+export const LOAD_FOLLOWERS_SUCCESS = 'LOAD_FOLLOWERS_SUCCESS';
+export const LOAD_FOLLOWERS_FAILURE = 'LOAD_FOLLOWERS_FAILURE';
+
+export const LOAD_FOLLOWINGS_REQUEST = 'LOAD_FOLLOWINGS_REQUEST';  // 나의 팔로잉 로드
+export const LOAD_FOLLOWINGS_SUCCESS = 'LOAD_FOLLOWINGS_SUCCESS';
+export const LOAD_FOLLOWINGS_FAILURE = 'LOAD_FOLLOWINGS_FAILURE';
 
 export const FOLLOW_USER_REQUEST = 'FOLLOW_USER_REQUEST';  // 팔로워
 export const FOLLOW_USER_SUCCESS = 'FOLLOW_USER_SUCCESS';
@@ -77,6 +81,67 @@ export const loadUserRequestAction = (data) => {
 
 const reducer = (state = initialState, action) => {
     switch(action.type){
+        case ADD_POST_TO_ME:{  //user 정봉에 데이터 변경을 위해
+            return{
+                ...state,
+                me:{
+                    ...state.me,
+                    Posts:[{id:action.data}, ...state.me.Posts]
+                }
+            }
+        }
+        case LOAD_FOLLOWERS_REQUEST: { //나의 팔로워 정보 불러오기
+            return{
+                ...state,
+            }
+        }
+        case LOAD_FOLLOWERS_SUCCESS: {
+            return{
+                ...state,
+                followerList:action.data,
+            }
+        }
+        case LOAD_FOLLOWERS_FAILURE: {
+            return{
+                ...state,
+            }
+        }
+        case LOAD_FOLLOWINGS_REQUEST: { //나의 팔로잉 정보 불러오기
+            return{
+                ...state,
+            }
+        }
+        case LOAD_FOLLOWINGS_SUCCESS: {
+            return{
+                ...state,
+                followingList:action.data
+            }
+        }
+        case LOAD_FOLLOWINGS_FAILURE: {
+            return{
+                ...state,
+            }
+        }
+        case REMOVE_FOLLOW_USER_REQUEST: { //나의 팔로워 유저 삭제
+            return{
+                ...state,
+            }
+        }
+        case REMOVE_FOLLOW_USER_SUCCESS: {
+            return{
+                ...state,
+                me:{
+                    ...state.me,
+                    Followers:state.me.Followers.filter(user => user.id !== action.data),
+                },
+                followerList: state.followerList.filter(user => user.id !== action.data),
+            }
+        }
+        case REMOVE_FOLLOW_USER_FAILURE: {
+            return{
+                ...state,
+            }
+        }
         case FOLLOW_USER_REQUEST: { //유저 팔로워
             return{
                 ...state,
@@ -111,7 +176,7 @@ const reducer = (state = initialState, action) => {
                     ...state.me,
                     Followings:state.me.Followings.filter(user => user.id !== action.data),
                 },
-                followingList: state.followingList.filter(user => user.id !== action.data),
+                followingList:state.followingList.filter(user => user.id !== action.data)
             }
         }
         case UNFOLLOW_USER_FAILURE: {
