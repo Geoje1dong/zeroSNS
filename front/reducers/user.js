@@ -9,7 +9,9 @@ export const initialState ={
     followingList:[],   //팔로잉 리스트
     followerList: [],   //팔로워 리스트
     me: null,   //내정보
-    userInfo: null, //남의 정보
+    userInfo: null, //남의 정보]
+    isEditingNickname: false,    //닉네임 변경중
+    editNicknameErrorReason:'', //닉네임 변경 에러 사유
 };
 
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';  //로그인
@@ -47,6 +49,10 @@ export const UNFOLLOW_USER_FAILURE = 'UNFOLLOW_USER_FAILURE';
 export const REMOVE_FOLLOW_USER_REQUEST = 'REMOVE_FOLLOW_USER_REQUEST';  // 내가 이상한 팔로워 삭제하는 기능
 export const REMOVE_FOLLOW_USER_SUCCESS = 'REMOVE_FOLLOW_USER_SUCCESS';
 export const REMOVE_FOLLOW_USER_FAILURE = 'REMOVE_FOLLOW_USER_FAILURE';
+
+export const EDIT_NICKNAME_REQUEST = 'EDIT_NICKNAME_REQUEST';   //닉네임 수정
+export const EDIT_NICKNAME_SUCCESS = 'EDIT_NICKNAME_SUCCESS';
+export const EDIT_NICKNAME_FAILURE = 'EDIT_NICKNAME_FAILURE';
 
 export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
 
@@ -88,6 +94,29 @@ const reducer = (state = initialState, action) => {
                     ...state.me,
                     Posts:[{id:action.data}, ...state.me.Posts]
                 }
+            }
+        }
+        case EDIT_NICKNAME_REQUEST: { //나의 닉네임 변경
+            return{
+                ...state,
+                 isEditingNickname:true,
+                 editNicknameErrorReason:''
+            }
+        }
+        case EDIT_NICKNAME_SUCCESS: {
+            return{
+                ...state,
+                me:{
+                    ...state.me,
+                    nickname:action.data
+                }
+            }
+        }
+        case EDIT_NICKNAME_FAILURE: {
+            return{
+                ...state,
+                isEditingNickname:false,
+                editNicknameErrorReason:action.error
             }
         }
         case LOAD_FOLLOWERS_REQUEST: { //나의 팔로워 정보 불러오기

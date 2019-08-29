@@ -30,7 +30,10 @@ import {
     REMOVE_FOLLOW_USER_REQUEST,
     LOAD_FOLLOWERS_SUCCESS,
     LOAD_FOLLOWERS_FAILURE,
-    LOAD_FOLLOWERS_REQUEST
+    LOAD_FOLLOWERS_REQUEST,
+    EDIT_NICKNAME_SUCCESS,
+    EDIT_NICKNAME_FAILURE,
+    EDIT_NICKNAME_REQUEST
 } from '../reducers/user';
 
 //로그아웃
@@ -273,6 +276,33 @@ function* watchRemoveFollow(){
     yield takeEvery(REMOVE_FOLLOW_USER_REQUEST,removeFollow)
 }
 
+//닉네임 수정
+function editNicknameAPI(nickname){
+    return axios.patch('/user/nickname', {nickname}, {
+        withCredentials: true,
+    });
+}
+
+function* editNickname(action){
+    try{
+        const result = yield call(editNicknameAPI, action.data);
+        yield put({
+            type:EDIT_NICKNAME_SUCCESS,
+            data:result.data
+        });
+    }catch(e){
+        console.log(e);
+        yield put({
+            type:EDIT_NICKNAME_FAILURE,
+            error:e,
+        });
+    }
+}
+
+function* watchEditNickname(){
+    yield takeEvery(EDIT_NICKNAME_REQUEST,editNickname)
+}
+
 export default function* userSaga(){
     yield all([
         fork(watchLogin),   //로그인
@@ -284,5 +314,6 @@ export default function* userSaga(){
         fork(watchRemoveFollow),    //내가 팔로워 삭제
         fork(watchLoadFollowers),    //내 팔로워 정보 불러오기
         fork(watchLoadFollowings),    //내 팔로잉 정보 불러오기
+        fork(watchEditNickname),  //닉네임 수정
     ]);
 }
