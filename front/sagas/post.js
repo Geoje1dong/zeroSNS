@@ -29,9 +29,12 @@ import {
     LIKE_POST_SUCCESS,
     RETWEET_REQUEST,
     RETWEET_FAILURE,
-    RETWEET_SUCCESS
+    RETWEET_SUCCESS,
+    REMOVE_POST_REQUEST,
+    REMOVE_POST_SUCCESS,
+    REMOVE_POST_FAILURE
 } from '../reducers/post';
-import {ADD_POST_TO_ME} from '../reducers/user'
+import {ADD_POST_TO_ME, REMOVE_POST_OF_ME} from '../reducers/user'
 
 import axios from 'axios';
 
@@ -125,13 +128,13 @@ function* watchAddPost(){
 }
 
 //게시글 불러오기
-function loaadMainPostsAPI(){
-    return axios.get('/posts')
+function loaadMainPostsAPI(lastId = 0, limit = 4){
+    return axios.get(`/posts?lastId=${lastId}&limit=${limit}`);
 }
 
-function* loaadMainPosts(){
+function* loaadMainPosts(action){
     try{
-        const result = yield call(loaadMainPostsAPI)
+        const result = yield call(loaadMainPostsAPI, action.lastId)
         yield put({
             type:LOAD_MAIN_POSTS_SUCCESS,
             data:result.data,
@@ -175,13 +178,13 @@ function* watchUploadImages(){
 }
 
 //해쉬태그 불러오기
-function loadHashtagPostsAPI(tag){
-    return axios.get(`/hashtag/${tag}`)
+function loadHashtagPostsAPI(tag, lastId = 0, limit=10){
+    return axios.get(`/hashtag/${encodeURIComponent(tag)}?lastId=${lastId}&limit=${limit}`)
 }
 
 function* loadHashtagPosts(action){
     try{
-        const result = yield call(loadHashtagPostsAPI, action.data)
+        const result = yield call(loadHashtagPostsAPI, action.data, action.lastId)
         yield put({
             type:LOAD_HASHTAG_POSTS_SUCCESS,
             data:result.data,
@@ -200,7 +203,7 @@ function* watchLoadHashtagPosts(){
 
 //남의 유저정보 불러오기
 function loadUserPostsAPI(id){
-    return axios.get(`/user/${id}/posts`)
+    return axios.get(`/user/${id || 0}/posts`)
 }
 
 function* loadUserPosts(action){
@@ -310,6 +313,37 @@ function* watchRetweet(){
     yield takeLatest(RETWEET_REQUEST,retweet)
 }
 
+//게시글 삭제
+function removePostAPI(postId){
+    return axios.delete(`/post/${postId}`, {
+        withCredentials: true,
+    });
+}
+
+function* removePost(action){
+    try{
+        const result = yield call(removePostAPI, action.data);
+        yield put({
+            type:REMOVE_POST_SUCCESS,
+            data:result.data
+        })
+        yield put({
+            type:REMOVE_POST_OF_ME,
+            data:result.data
+        })
+    }catch(e){
+        yield put({
+            type:REMOVE_POST_FAILURE,
+            error:e,
+        });
+        console.error(e);
+    }
+}
+
+function* watchRemovePost(){
+    yield takeLatest(REMOVE_POST_REQUEST,removePost)
+}
+
 export default function* postSaga(){
     yield all([
         fork(watchAddPost),
@@ -321,6 +355,7 @@ export default function* postSaga(){
         fork(watchUploadImages),
         fork(watchLikePost),
         fork(watchUnlikePost),
-        fork(watchRetweet)
+        fork(watchRetweet),
+        fork(watchRemovePost)
     ]);
 }

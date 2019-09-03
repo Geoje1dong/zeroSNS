@@ -83,6 +83,23 @@ export const loadMainPostsRequestAction = {
 
 const reducer = (state= initialState, action) => {
     switch(action.type){
+        case REMOVE_POST_REQUEST:{ //게시글 삭제
+            return{
+                ...state,
+            }
+        }
+        case REMOVE_POST_SUCCESS:{
+            return{
+                ...state,
+                mainPosts: state.mainPosts.filter(post => post.id !== action.data),
+            }
+        }
+        case REMOVE_POST_FAILURE:{
+            return{
+                ...state,
+            }
+        }
+
         case ADD_POST_REQUEST:{ //게시글 등록
             return{
                 ...state,
@@ -233,7 +250,7 @@ const reducer = (state= initialState, action) => {
         case LOAD_USER_POSTS_REQUEST:{  //유저 프로필 불러오기
             return{
                 ...state,
-                mainPosts: [],
+                mainPosts: action.lastId === 0 ? [] : state.mainPosts,
             }
         }
         case LOAD_MAIN_POSTS_SUCCESS:
@@ -241,7 +258,7 @@ const reducer = (state= initialState, action) => {
         case LOAD_USER_POSTS_SUCCESS:{
             return{
                 ...state,
-                mainPosts: action.data,
+                mainPosts: state.mainPosts.concat(action.data)
             }
         }
         case LOAD_MAIN_POSTS_FAILURE:

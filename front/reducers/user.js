@@ -12,6 +12,8 @@ export const initialState ={
     userInfo: null, //남의 정보]
     isEditingNickname: false,    //닉네임 변경중
     editNicknameErrorReason:'', //닉네임 변경 에러 사유
+    hasMoreFollower:false,  //팔로워 더보기 버튼
+    hasMoreFollowing:false, //팔로잉 더보기 버튼
 };
 
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';  //로그인
@@ -54,7 +56,8 @@ export const EDIT_NICKNAME_REQUEST = 'EDIT_NICKNAME_REQUEST';   //닉네임 수�
 export const EDIT_NICKNAME_SUCCESS = 'EDIT_NICKNAME_SUCCESS';
 export const EDIT_NICKNAME_FAILURE = 'EDIT_NICKNAME_FAILURE';
 
-export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
+export const ADD_POST_TO_ME = 'ADD_POST_TO_ME'; //유저 게시물 숫자 + 카운터
+export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME'; //유저 게시물 숫자 - 카운터
 
 export const loginRequestAction = (data) => {
     return {
@@ -87,6 +90,15 @@ export const loadUserRequestAction = (data) => {
 
 const reducer = (state = initialState, action) => {
     switch(action.type){
+        case REMOVE_POST_OF_ME:{  //user 정봉에 데이터 변경을 위해
+            return{
+                ...state,
+                me:{
+                    ...state.me,
+                    Posts:state.Posts.filter(post => post.id !== action.data)
+                }
+            }
+        }
         case ADD_POST_TO_ME:{  //user 정봉에 데이터 변경을 위해
             return{
                 ...state,
@@ -122,12 +134,14 @@ const reducer = (state = initialState, action) => {
         case LOAD_FOLLOWERS_REQUEST: { //나의 팔로워 정보 불러오기
             return{
                 ...state,
+                hasMoreFollower: action.offset ? state.hasMoreFollower : true,  //
             }
         }
         case LOAD_FOLLOWERS_SUCCESS: {
             return{
                 ...state,
-                followerList:action.data,
+                followerList:state.followerList.concat(action.data),
+                hasMoreFollower: action.data.length === 3,
             }
         }
         case LOAD_FOLLOWERS_FAILURE: {
@@ -138,12 +152,14 @@ const reducer = (state = initialState, action) => {
         case LOAD_FOLLOWINGS_REQUEST: { //나의 팔로잉 정보 불러오기
             return{
                 ...state,
+                hasMoreFollowing: action.offset ? state.hasMoreFollowing : true,
             }
         }
         case LOAD_FOLLOWINGS_SUCCESS: {
             return{
                 ...state,
-                followingList:action.data
+                followingList:state.followingList.concat(action.data),
+                hasMoreFollowing: action.data === 3,
             }
         }
         case LOAD_FOLLOWINGS_FAILURE: {

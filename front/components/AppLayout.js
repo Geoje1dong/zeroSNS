@@ -7,11 +7,11 @@ import { loadUserAction } from '../reducers/user';
 const AppLayout = ({ children }) => {
     const {me} = useSelector(state => state.user)
     const dispatch = useDispatch();
-    useEffect(() => {
-        if(!me){
-            dispatch(loadUserAction);
-        }
-    }, []);
+    // useEffect(() => {
+    //     if(!me){
+    //         dispatch(loadUserAction);
+    //     }
+    // }, []);
 
     let loginState = null;
     if(me){

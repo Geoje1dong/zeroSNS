@@ -1,6 +1,5 @@
 import React,{useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import { loadHashtagPostsRequestAction } from '../reducers/post';
 import { LOAD_HASHTAG_POSTS_REQUEST } from '../reducers/post';
 import PostCard from '../components/PostCard';
 
@@ -10,17 +9,11 @@ const Hashtag = ({tag}) => {
     const {mainPosts} = useSelector(state => state.post);
 
     // useEffect(() => {
-    //     dispatch(loadHashtagPostsRequestAction({
-    //         data:tag,
-    //     }))
-    // },[]);
-
-    useEffect(() => {
-        dispatch({
-          type: LOAD_HASHTAG_POSTS_REQUEST,
-          data: tag,
-        });
-      }, []);
+    //     dispatch({
+    //       type: LOAD_HASHTAG_POSTS_REQUEST,
+    //       data: tag,
+    //     });
+    //   }, []);
 
     return(
         <div>
@@ -32,8 +25,13 @@ const Hashtag = ({tag}) => {
 }
 
 Hashtag.getInitialProps = async (context) => {
-    console.log('hashtag getInitialProps', context.query.tag);
-    return { tag: context.query.tag };
-  };
+  const tag = context.query.tag;
+  console.log('hashtag getInitialProps', tag);
+  context.store.dispatch({
+    type: LOAD_HASHTAG_POSTS_REQUEST,
+    data: tag,
+  });
+  return { tag };
+};
 
 export default Hashtag;

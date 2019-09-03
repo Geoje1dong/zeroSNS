@@ -4,20 +4,31 @@ import PostCard from '../components/PostCard';
 import {useDispatch, useSelector} from 'react-redux';
 import {loginAction, logoutAction} from '../reducers/user';
 import LoginFrom from '../components/LoginForm';
-import { loadMainPostsRequestAction } from '../reducers/post';
+import { loadMainPostsRequestAction, LOAD_MAIN_POSTS_REQUEST } from '../reducers/post';
 
 const Home = () => {
     const { user, me } = useSelector(state => state.user);
     const { mainPosts } = useSelector(state => state.post);
-    //const dispatch = useDispatch();
-    // useEffect(() => {
-    //     dispatch(loginAction)
-    //     dispatch(logoutAction)
-    // },[]);
+    
     const dispatch = useDispatch();
+
+    const onScroll = () => {
+        if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
+            const lastId = mainPosts[mainPosts.length - 1].id;
+            dispatch({
+                type:LOAD_MAIN_POSTS_REQUEST,
+                lastId
+            })
+        }
+    }
+
     useEffect(() => {
-        dispatch(loadMainPostsRequestAction);
-    },[])
+        window.addEventListener('scroll', onScroll);
+        return () => {
+            window.removeEventListener('scroll', onScroll);
+        }
+    },[mainPosts.length]);
+
     return (
         <React.Fragment>
             {me ?
@@ -30,6 +41,13 @@ const Home = () => {
             
         </React.Fragment>
     )
+}
+
+Home.getInitialProps = async(context) => {
+    context.store.dispatch({
+        type:LOAD_MAIN_POSTS_REQUEST
+    })
+
 }
 
 export default Home;
