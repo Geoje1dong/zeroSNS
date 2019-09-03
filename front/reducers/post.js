@@ -7,6 +7,7 @@ export const initialState = {
     isAddingComment: false, //코멘트 업로드 중
     addPostErrorReason: '', //코멘트 업로드 실패 사유
     commentAdded:false, //코멘트 업로드 성공
+    hasMorePost:false,  //더이상 포스트 가 없을때 스크롤
 }
 
 export const LOAD_MAIN_POSTS_REQUEST = 'LOAD_MAIN_POSTS_REQUEST';   // 로드 메인 포스터
@@ -251,6 +252,7 @@ const reducer = (state= initialState, action) => {
             return{
                 ...state,
                 mainPosts: action.lastId === 0 ? [] : state.mainPosts,
+                hasMorePost: action.lastId ? state.hasMorePost : true,
             }
         }
         case LOAD_MAIN_POSTS_SUCCESS:
@@ -258,7 +260,8 @@ const reducer = (state= initialState, action) => {
         case LOAD_USER_POSTS_SUCCESS:{
             return{
                 ...state,
-                mainPosts: state.mainPosts.concat(action.data)
+                mainPosts: state.mainPosts.concat(action.data),
+                hasMorePost: action.data.length === 4,
             }
         }
         case LOAD_MAIN_POSTS_FAILURE:

@@ -1,4 +1,4 @@
-import {all, takeLatest, fork, call, put, delay} from 'redux-saga/effects';
+import {all, takeLatest, fork, call, put, delay, throttle} from 'redux-saga/effects';
 import {
     ADD_POST_REQUEST, 
     ADD_POST_SUCCESS, 
@@ -148,7 +148,7 @@ function* loaadMainPosts(action){
 }
 
 function* watchLoadMainPosts(){
-    yield takeLatest(LOAD_MAIN_POSTS_REQUEST, loaadMainPosts)
+    yield throttle(2000, LOAD_MAIN_POSTS_REQUEST, loaadMainPosts)
 }
 
 //이미지 업로드
@@ -178,7 +178,7 @@ function* watchUploadImages(){
 }
 
 //해쉬태그 불러오기
-function loadHashtagPostsAPI(tag, lastId = 0, limit=10){
+function loadHashtagPostsAPI(tag, lastId = 0, limit=4){
     return axios.get(`/hashtag/${encodeURIComponent(tag)}?lastId=${lastId}&limit=${limit}`)
 }
 
@@ -198,7 +198,7 @@ function* loadHashtagPosts(action){
 }
 
 function* watchLoadHashtagPosts(){
-    yield takeLatest(LOAD_HASHTAG_POSTS_REQUEST, loadHashtagPosts)
+    yield throttle(2000, LOAD_HASHTAG_POSTS_REQUEST, loadHashtagPosts)
 }
 
 //남의 유저정보 불러오기

@@ -8,17 +8,20 @@ import { loadMainPostsRequestAction, LOAD_MAIN_POSTS_REQUEST } from '../reducers
 
 const Home = () => {
     const { user, me } = useSelector(state => state.user);
-    const { mainPosts } = useSelector(state => state.post);
+    const { mainPosts, hasMorePost } = useSelector(state => state.post);
     
     const dispatch = useDispatch();
 
     const onScroll = () => {
         if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
-            const lastId = mainPosts[mainPosts.length - 1].id;
-            dispatch({
-                type:LOAD_MAIN_POSTS_REQUEST,
-                lastId
-            })
+            
+            if(hasMorePost){
+                const lastId = mainPosts[mainPosts.length - 1].id;
+                dispatch({
+                    type:LOAD_MAIN_POSTS_REQUEST,
+                    lastId
+                })
+            }            
         }
     }
 
