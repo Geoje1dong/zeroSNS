@@ -1,3 +1,5 @@
+import produce, { isDraft } from 'immer';
+
 export const initialState = {
     mainPosts: [], //화면에 보일 포스트들
     imagePaths: [], //미리보기 이미지 경로
@@ -83,200 +85,140 @@ export const loadMainPostsRequestAction = {
 }
 
 const reducer = (state= initialState, action) => {
-    switch(action.type){
-        case REMOVE_POST_REQUEST:{ //게시글 삭제
-            return{
-                ...state,
+    return produce(state, (draft) => {
+        switch(action.type){
+            case REMOVE_POST_REQUEST:{ //게시글 삭제
+                break;
+            }
+            case REMOVE_POST_SUCCESS:{
+                const index = draft.mainPosts.findIndex(post => post.id === action.data);
+                draft.mainPosts.splice(index, 1);
+                break;
+            }
+            case REMOVE_POST_FAILURE:{
+                break;
+            }
+    
+            case ADD_POST_REQUEST:{ //게시글 등록
+                draft.isAddingPost = true;
+                draft.addPostErrorReason = '';
+                draft.postAdded = false;
+                break;
+            }
+            case ADD_POST_SUCCESS:{
+                draft.isAddingPost = false;
+                draft.mainPosts.unshift(action.data);
+                draft.postAdded = true;
+                draft.imagePaths = [];
+                break;
+            }
+            case ADD_POST_FAILURE:{
+                draft.isAddingPost = false;
+                draft.addPostErrorReason = action.error;
+                draft.postAdded = false;
+                break;
+            }
+            case UPLOAD_IMAGES_REQUEST:{    //이미지 업로드
+                break;
+            }
+            case UPLOAD_IMAGES_SUCCESS:{
+                draft.imagePaths = draft.imagePaths.concat(action.data);
+                action.data.forEach((p) => {
+                    draft.imagePaths.push(p);
+                })
+                break;
+            }
+            case UPLOAD_IMAGES_FAILURE:{
+                break;
+            }
+            case REMOVE_IMAGE:{ //이미지 삭제
+                const index = draft.imagePaths.findIndex((v, i) => i === action.index)
+                draft.imagePaths.splice(index, 1);
+                break;
+            }
+            case ADD_COMMENT_REQUEST:{  // 코멘트 등록
+                draft.isAddingComment = true;
+                draft.addCommentErrorReason = '';
+                draft.postAdded = false
+                break;
+            }
+            case ADD_COMMENT_SUCCESS:{
+                const postIndex = draft.mainPosts.findIndex(post => post.id === action.data.postId) //게시글 위치 확인
+                draft.mainPosts[postIndex].Comments.push(action.data.comment);
+                draft.isAddingComment = false;
+                draft.commentAdded = true
+                break;
+            }
+            case ADD_COMMENT_FAILURE:{
+                draft.isAddingComment = false;
+                draft.addCommentErrorReason = action.error;
+                draft.commentAdded = false;
+                break;
+            }
+            case LOAD_COMMENTS_SUCCESS: {   // 코멘트 불러오기
+                const postIndex = draft.mainPosts.findIndex(post => post.id === action.data.postId);
+                draft.mainPosts[postIndex].Comments = action.data.comments;
+                break;
+            }
+            case LIKE_POST_REQUEST:{ //좋아요 등록
+                break;
+            }
+            case LIKE_POST_SUCCESS:{
+                const postIndex = draft.mainPosts.findIndex(post => post.id === action.data.postId);
+                draft.mainPosts[postIndex].Likers.unshift({id:action.data.userId});
+                break;
+            }
+            case LIKE_POST_FAILURE:{
+                break;
+            }
+            case UNLIKE_POST_REQUEST:{ //좋아요 취소
+                break;
+            }
+            case UNLIKE_POST_SUCCESS:{
+                const postIndex = draft.mainPosts.findIndex(post => post.id === action.data.postId);
+                const likeIndex = draft.mainPosts[postIndex].Likers.findIndex(post => post.id === action.data.userId);
+                draft.mainPosts[postIndex].Likers.splice(likeIndex, 1)
+                break;
+            }
+            case UNLIKE_POST_FAILURE:{
+                break;
+            }
+            case RETWEET_REQUEST:{ //retweet
+                break;
+            }
+            case RETWEET_SUCCESS:{
+                draft.mainPosts.unshift(action.data);
+                break;
+            }
+            case RETWEET_FAILURE:{
+                break;
+            }
+            case LOAD_MAIN_POSTS_REQUEST:   //메인 포스트 불러오기
+            case LOAD_HASHTAG_POSTS_REQUEST:    //해쉬태그 불러오기
+            case LOAD_USER_POSTS_REQUEST:{  //유저 프로필 불러오기
+                draft.mainPosts = action.lastId === 0 ? [] : draft.mainPosts;
+                draft.hasMorePost = action.lastId ? draft.hasMorePost : true;
+                break;
+            }
+            case LOAD_MAIN_POSTS_SUCCESS:
+            case LOAD_HASHTAG_POSTS_SUCCESS:
+            case LOAD_USER_POSTS_SUCCESS:{
+                action.data.forEach((post) => {
+                    draft.mainPosts.push(post);
+                })
+                draft.hasMorePost = action.data.length === 4;
+                break;
+            }
+            case LOAD_MAIN_POSTS_FAILURE:
+            case LOAD_HASHTAG_POSTS_FAILURE:
+            case LOAD_USER_POSTS_FAILURE:{
+                break;
+            }
+            default: {
+                break;
             }
         }
-        case REMOVE_POST_SUCCESS:{
-            return{
-                ...state,
-                mainPosts: state.mainPosts.filter(post => post.id !== action.data),
-            }
-        }
-        case REMOVE_POST_FAILURE:{
-            return{
-                ...state,
-            }
-        }
-
-        case ADD_POST_REQUEST:{ //게시글 등록
-            return{
-                ...state,
-                isAddingPost:true,
-                addPostErrorReason:'',
-                postAdded:false,
-            }
-        }
-        case ADD_POST_SUCCESS:{
-            return{
-                ...state,
-                mainPosts: [action.data, ...state.mainPosts],
-                postAdded:true,
-                isAddingPost:false,
-                imagePaths:[],
-            }
-        }
-        case ADD_POST_FAILURE:{
-            return{
-                ...state,
-                isAddingPost:false,
-                addPostErrorReason:action.error,
-                postAdded:false,
-            }
-        }
-        case UPLOAD_IMAGES_REQUEST:{    //이미지 업로드
-            return{
-                ...state,
-            }
-        }
-        case UPLOAD_IMAGES_SUCCESS:{
-            return{
-                ...state,
-                imagePaths: [...state.imagePaths, ...action.data]
-            }
-        }
-        case UPLOAD_IMAGES_FAILURE:{
-            return{
-                ...state,
-            }
-        }
-        case REMOVE_IMAGE:{ //이미지 삭제
-            return{
-                ...state,
-                imagePaths: state.imagePaths.filter((v,i) => i !== action.index)
-            }
-        }
-        case ADD_COMMENT_REQUEST:{  // 코멘트 등록
-            return{
-                ...state,
-                isAddingComment:true,
-                addCommentErrorReason:'',
-                postAdded:false,
-            }
-        }
-        case ADD_COMMENT_SUCCESS:{
-            const postIndex = state.mainPosts.findIndex(v => v.id === action.data.postId) //게시글 위치 확인
-            const post = state.mainPosts[postIndex];
-            const Comments = [...post.Comments, action.data.comment];
-            const mainPosts = [...state.mainPosts];
-            mainPosts[postIndex] = {...post, Comments};
-            return{
-                ...state,
-                isAddingComment:false,
-                mainPosts,
-                commentAdded:true,                
-            }
-        }
-        case ADD_COMMENT_FAILURE:{
-            return{
-                ...state,
-                isAddingComment:false,
-                addCommentErrorReason:action.error,
-                commentAdded:false,
-            }
-        }
-        case LOAD_COMMENTS_SUCCESS: {   // 코멘트 불러오기
-            const postIndex = state.mainPosts.findIndex(v => v.id === action.data.postId);
-            const post = state.mainPosts[postIndex];
-            const Comments = action.data.comments;
-            const mainPosts = [...state.mainPosts];
-            mainPosts[postIndex] = { ...post, Comments };
-            return {
-                ...state,
-                mainPosts,
-            };
-        }
-        case LIKE_POST_REQUEST:{ //좋아요 등록
-            return{
-                ...state,
-            }
-        }
-        case LIKE_POST_SUCCESS:{
-            const postIndex = state.mainPosts.findIndex(post => post.id === action.data.postId);
-            const post = state.mainPosts[postIndex];
-            const Likers = [{id:action.data.userId}, ...post.Likers];
-            const mainPosts = [...state.mainPosts];
-            mainPosts[postIndex] = {...post, Likers};
-            return{
-                ...state,
-                mainPosts
-            }
-        }
-        case LIKE_POST_FAILURE:{
-            return{
-                ...state,
-            }
-        }
-        case UNLIKE_POST_REQUEST:{ //좋아요 취소
-            return{
-                ...state,
-            }
-        }
-        case UNLIKE_POST_SUCCESS:{
-            const postIndex = state.mainPosts.findIndex(post => post.id === action.data.postId);
-            const post = state.mainPosts[postIndex];
-            const Likers = post.Likers.filter(post => post.id !== action.data.userId);
-            const mainPosts = [...state.mainPosts];
-            mainPosts[postIndex] = {...post, Likers};
-            return{
-                ...state,
-                mainPosts
-            }
-        }
-        case UNLIKE_POST_FAILURE:{
-            return{
-                ...state,
-            }
-        }
-        case RETWEET_REQUEST:{ //retweet
-            return{
-                ...state,
-            }
-        }
-        case RETWEET_SUCCESS:{
-            return{
-                ...state,
-                mainPosts: [action.data, ...state.mainPosts],
-            }
-        }
-        case RETWEET_FAILURE:{
-            return{
-                ...state,
-            }
-        }
-        case LOAD_MAIN_POSTS_REQUEST:   //메인 포스트 불러오기
-        case LOAD_HASHTAG_POSTS_REQUEST:    //해쉬태그 불러오기
-        case LOAD_USER_POSTS_REQUEST:{  //유저 프로필 불러오기
-            return{
-                ...state,
-                mainPosts: action.lastId === 0 ? [] : state.mainPosts,
-                hasMorePost: action.lastId ? state.hasMorePost : true,
-            }
-        }
-        case LOAD_MAIN_POSTS_SUCCESS:
-        case LOAD_HASHTAG_POSTS_SUCCESS:
-        case LOAD_USER_POSTS_SUCCESS:{
-            return{
-                ...state,
-                mainPosts: state.mainPosts.concat(action.data),
-                hasMorePost: action.data.length === 4,
-            }
-        }
-        case LOAD_MAIN_POSTS_FAILURE:
-        case LOAD_HASHTAG_POSTS_FAILURE:
-        case LOAD_USER_POSTS_FAILURE:{
-            return{
-                ...state,
-            }
-        }
-        default: {
-            return{
-                ...state,
-            }
-        }
-    }
+    });
 }
 
 export default reducer;

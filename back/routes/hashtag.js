@@ -6,11 +6,18 @@ const router = express.Router();
 router.get('/:tag', async(req, res, next) => {
     try{
         let where = {}
-        const lastId = parseInt(req.query.lastId, 10);
-        if(lastId){
+        // const lastId = parseInt(req.query.lastId, 10);
+        // if(lastId){
+        //     where = {
+        //         id:{
+        //             [db.Sequelize.Op.lt]: lastId
+        //         }
+        //     }
+        // }
+        if(parseInt(req.query.lastId, 10)){
             where = {
                 id:{
-                    [db.Sequelize.Op.lt]: lastId
+                    [db.Sequelize.Op.lt]: parseInt(req.query.lastId, 10),
                 }
             }
         }
@@ -39,6 +46,7 @@ router.get('/:tag', async(req, res, next) => {
                     model:db.Image
                 }]
             }],
+            // order: [['createAt', 'DESC']],
             limit: parseInt(req.query.limit, 10),
         });        
         res.json(posts);
